@@ -1,0 +1,17 @@
+Area,Required validation,Current state,Required evidence,Gate status
+Unity build,Fresh import and target build,NOT RUN,Editor log plus artifact ID,BLOCKED
+Regression,PB1 through PB8 Edit Mode suites,NOT RUN,Test results XML plus source revision,BLOCKED
+Golden match,Deterministic six-player five-round outcome,NOT RUN,Seed/config/build plus expected-result report,BLOCKED
+Online multiplayer,Real four/six-player clients and reconnect,NOT IMPLEMENTED,Staging session recording and server logs,BLOCKED
+Scenario quality,Truth consistency deduction fairness and reveal explanation,NOT RUN,Scenario validation output plus reviewed playtest records,BLOCKED
+Backend security,Auth result profile reward and secret-isolation attack cases,NOT IMPLEMENTED,Independent security report and server evidence,BLOCKED
+Privacy,Logs crash reports telemetry and report payload review,NOT RUN,Redacted sample export and approval,BLOCKED
+Moderation,Spam reports mute block and report abuse,NOT IMPLEMENTED,Staging run IDs and moderation review,BLOCKED
+Accessibility,Keyboard screen reader contrast reduced motion and text scale,NOT RUN,Device/platform checklist plus user evaluation,BLOCKED
+Performance,Frame memory thermal battery network and long-session checks,NOT RUN,Target-device profiler captures and thresholds,BLOCKED
+Platform,Install update resume and certification checks per target,NOT RUN,Platform-specific evidence bundle,BLOCKED
+Load and soak,Capacity spike and long-run service stability,NOT IMPLEMENTED,Staging load report and capacity approval,BLOCKED
+Analytics,Schema quality delivery and outage behavior,NOT IMPLEMENTED,Dashboard query and outage drill record,BLOCKED
+Operations,Alert incident reward outage backup restore rollback,NOT IMPLEMENTED,Completed drill records and recovery times,BLOCKED
+Beta,Invite flow player comprehension fairness retention,NOT STARTED,Cohort report with consent and privacy review,BLOCKED
+Launch gate,All critical gates and named sign-offs,NOT STARTED,Completed Go-No-Go.md,BLOCKED

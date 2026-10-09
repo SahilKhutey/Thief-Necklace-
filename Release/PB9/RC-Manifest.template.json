@@ -1,0 +1,26 @@
+{
+  "product": "Thief & the Necklace",
+  "releaseTrack": "closed-beta",
+  "candidate": "RC1",
+  "gameVersion": "UNASSIGNED",
+  "buildId": "UNASSIGNED",
+  "sourceRevision": "UNASSIGNED",
+  "builtAtUtc": "UNASSIGNED",
+  "targetPlatforms": [],
+  "networkProtocolVersion": null,
+  "contentVersion": "UNASSIGNED",
+  "scenarioVersion": "UNASSIGNED",
+  "profileSchemaVersion": null,
+  "configurationVersion": null,
+  "unityEditorVersion": "6000.3.0f1",
+  "dependencyLockHash": "UNASSIGNED",
+  "artifacts": [],
+  "signingIdentity": "UNASSIGNED",
+  "manifestStatus": "TEMPLATE",
+  "approvals": {
+    "engineering": "PENDING",
+    "qa": "PENDING",
+    "security": "PENDING",
+    "product": "PENDING"
+  }
+}

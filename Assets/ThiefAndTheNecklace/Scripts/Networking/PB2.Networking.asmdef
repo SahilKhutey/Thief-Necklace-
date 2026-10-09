@@ -1,0 +1,16 @@
+{
+  "name": "ThiefAndTheNecklace.PB2.Networking",
+  "rootNamespace": "ThiefAndTheNecklace.Networking",
+  "references": [
+    "ThiefAndTheNecklace.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

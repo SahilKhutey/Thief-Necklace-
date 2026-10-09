@@ -1,0 +1,17 @@
+{
+  "name": "ThiefAndTheNecklace.Backend",
+  "rootNamespace": "ThiefAndTheNecklace.Backend",
+  "references": [
+    "ThiefAndTheNecklace.Core",
+    "ThiefAndTheNecklace.PB2.Networking"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

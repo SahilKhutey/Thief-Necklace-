@@ -1,0 +1,13 @@
+Requirement,Source implementation,Existing test asset,Integration evidence,E2E or platform evidence,Status
+One Thief per generated round,Assets/ThiefAndTheNecklace/Scripts/Core/ScenarioGenerator.cs;ScenarioValidator.cs,Assets/ThiefAndTheNecklace/Tests/EditMode/ScenarioEngineTests.cs,NOT RUN,NOT RUN,NOT RUN
+No self-vote,Assets/ThiefAndTheNecklace/Scripts/Core/VoteManager.cs;Scripts/Networking,Assets/ThiefAndTheNecklace/Tests/EditMode/PB2NetworkingTests.cs,NOT RUN,NOT RUN,NOT RUN
+Tie leads to runoff and final tie escapes,Assets/ThiefAndTheNecklace/Scripts/Core/VoteManager.cs,Assets/ThiefAndTheNecklace/Tests/EditMode/CoreGameplayTests.cs,NOT RUN,NOT RUN,NOT RUN
+Five-round match and score persistence,Assets/ThiefAndTheNecklace/Scripts/Core;Scripts/Meta,Assets/ThiefAndTheNecklace/Tests/EditMode/CoreGameplayTests.cs,NOT RUN,NOT RUN,NOT RUN
+Private state only reaches intended recipient,Assets/ThiefAndTheNecklace/Scripts/Networking/PrivateStateDispatcher.cs,Assets/ThiefAndTheNecklace/Tests/EditMode/PB2NetworkingTests.cs,NOT RUN,NOT RUN,NOT RUN
+Chat size and rate validation,Assets/ThiefAndTheNecklace/Scripts/Networking,Assets/ThiefAndTheNecklace/Tests/EditMode/PB2NetworkingTests.cs,NOT RUN,NOT RUN,NOT RUN
+Authenticated online session and matchmaking,No provider adapter,No integration test,NOT IMPLEMENTED,NOT IMPLEMENTED,BLOCKED
+Server-authoritative match result and reward,Backend contracts only; no authority/store adapter,No integration test,NOT IMPLEMENTED,NOT IMPLEMENTED,BLOCKED
+Profile ownership and persistence,Backend contract plus local PB7 profile,No provider integration test,NOT IMPLEMENTED,NOT IMPLEMENTED,BLOCKED
+Crash, performance, device and accessibility requirements,No release build/evidence,No recorded run,NOT RUN,NOT RUN,BLOCKED
+Beta comprehension, fairness and replay value,No beta cohort,No beta evidence,NOT RUN,NOT RUN,NOT STARTED
+Backup, restore, rollback and incident recovery,Runbook template only,No staging infrastructure,NOT RUN,NOT RUN,BLOCKED

@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible project or gameplay issue
+title: "[Bug]: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include passwords, auth tokens, player exports, private clues, secret roles, raw chat, or personal data. This project is currently an offline prototype; state clearly if the issue depends on a service that is not connected.
+  - type: input
+    id: build
+    attributes:
+      label: Build or source revision
+      placeholder: Commit hash or development build ID
+    validations:
+      required: true
+  - type: input
+    id: unity
+    attributes:
+      label: Unity version
+      placeholder: 6000.3.0f1
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Import or compile
+        - Gameplay
+        - Scenario generation
+        - UI or accessibility
+        - Profile or progression
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest safe, repeatable sequence.
+      placeholder: 1. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence
+      description: Add console excerpt or screenshot after removing personal data and any secret game information.
+    validations:
+      required: false
