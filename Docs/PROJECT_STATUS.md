@@ -2,11 +2,11 @@
 
 ## Current state
 
-This repository contains an offline four-player pass-and-play Unity prototype, scenario-generation code, test source files, and a series of architecture/control-plane foundations. It is **not** an online product or production release candidate.
+This repository contains an offline four-to-six-player pass-and-play Unity prototype, scenario-generation code, test source files, and a series of architecture/control-plane foundations. It is **not** an online product or production release candidate.
 
 | Area | In repository | Verified status |
 |---|---|---|
-| Core match flow | Offline local UI and core rules | Not compiled or run in the current environment |
+| Core match flow | Offline 4–6 player local UI and core rules; five-round match; seeded scenarios | Not compiled or run in the current environment |
 | Scenario generation | Seeded generator, authored templates, validator | Source present; Unity and mass-validation evidence not recorded |
 | Multiplayer | Authority and routing contracts | No NGO/Relay/Auth/session adapter or online client |
 | Backend | Match/profile/matchmaking/moderation contracts | No backend host, database, or provider adapter |

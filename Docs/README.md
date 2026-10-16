@@ -1,6 +1,7 @@
 # Documentation
 
 - [Project status](PROJECT_STATUS.md) — what exists, what is unverified, and what blocks release.
+- [PB1 core mechanics](../PB1-Implementation-Status.md) — implementation map, role-rule interpretation, and verification boundary.
 - [Architecture](ARCHITECTURE.md) — systems, data flow, and trust boundaries.
 - [Content workflow](CONTENT_WORKFLOW.md) — authoring and validating mysteries/content packages.
 - [Build and validation](BUILDING.md) — Unity setup and candidate verification sequence.

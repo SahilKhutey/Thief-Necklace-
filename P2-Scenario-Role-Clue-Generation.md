@@ -98,7 +98,7 @@ Suggested MVP roles and point values, carried forward from P1:
 | Minister | 6 | royal, official |
 | Soldier | 5 | guard, palace |
 | Servant | 4 | staff, palace |
-| Guard | 3 | guard, palace |
+| Guard | 5 | guard, palace (updated by the later P7 scoring configuration) |
 
 Use a validated, configurable role pool. For the first authored packs, curated sets may be used: four players (King, Minister, Soldier, Servant); five players (King, Queen, Minister, Soldier, Servant); six players (those five plus Guard or Guest). Exactly one player is independently assigned the Thief objective. Do not add a second “Thief role” that consumes a player slot.
 

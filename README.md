@@ -15,7 +15,7 @@ The design goal is to reward building a coherent story from overlapping evidence
 ## Current implementation
 
 - Unity 6.3 project metadata (`6000.3.0f1`); Package Manager lists Unity Test Framework.
-- Offline four-player pass-and-play prototype with authored UI/runtime flow.
+- Offline four-to-six-player pass-and-play prototype with a five-round match, configurable deterministic seed, and authored UI/runtime flow. The Thief is a hidden objective layered over a normal role.
 - Seeded scenario generator and scenario validator for 4–6 players, with authored mystery templates.
 - PB2 networking/authority contracts, PB8 backend/security service seams, and PB10 live-content operations model. These are foundations, not connected production services.
 - Local progression/profile foundations.
@@ -52,7 +52,8 @@ Design source documents remain at the repository root (`P1`–`P9`) alongside th
 ## Repository layout
 
 ```text
-Assets/ThiefAndTheNecklace/Scripts/Core       Game rules and scenario generation
+Assets/ThiefAndTheNecklace/Scripts/Core       Game rules, scenario generation, and PB1 match core
+Assets/ThiefAndTheNecklace/Scripts/PB1Unity   PB1 ScriptableObjects, timer, reveal, and bootstrap adapters
 Assets/ThiefAndTheNecklace/Scripts/UI         Offline UI and presentation hooks
 Assets/ThiefAndTheNecklace/Scripts/Networking Engine-independent network contracts
 Assets/ThiefAndTheNecklace/Scripts/Backend    Backend service contracts and guardrails
