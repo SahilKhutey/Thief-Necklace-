@@ -12,6 +12,8 @@ namespace ThiefAndTheNecklace
     {
         private const int TotalRounds = 5;
         private const float DiscussionDuration = 180f;
+        private const int DefaultPlayerCount = 4;
+        private const int DefaultMatchSeed = 10001;
         private static Color Ink = new Color(0.13f, 0.10f, 0.08f);
         private static Color Panel = new Color(0.20f, 0.15f, 0.11f);
         private static Color Parchment = new Color(0.88f, 0.79f, 0.61f);
@@ -43,6 +45,8 @@ namespace ThiefAndTheNecklace
         private View _view;
         private int _roundNumber;
         private int _seed;
+        private int _playerCount = DefaultPlayerCount;
+        private int _matchSeed = DefaultMatchSeed;
         private float _discussionRemaining;
         private int _privatePlayerIndex;
         private bool _secretVisible;
@@ -127,7 +131,7 @@ namespace ThiefAndTheNecklace
             var fallbackId = registry.All.FirstOrDefault(s => s.scenarioId == "ROYAL_NECKLACE_01")?.scenarioId ?? registry.All.First().scenarioId;
             _roundSource = new ProceduralRoundSource(registry, fallbackId);
             _players.Clear();
-            for (var i = 1; i <= 4; i++) _players.Add(new PlayerData("P" + i, i == 1 ? _profileService.Current.displayName : "Player " + i));
+            for (var i = 1; i <= _playerCount; i++) _players.Add(new PlayerData("P" + i, i == 1 ? _profileService.Current.displayName : "Player " + i));
             _matchId = Guid.NewGuid().ToString("N");
             _matchStartScore = 0;
             _xpAtMatchStart = _profileService.Current.totalXp;
@@ -141,7 +145,7 @@ namespace ThiefAndTheNecklace
         private void StartRound()
         {
             _roundNumber++;
-            _seed = unchecked(Environment.TickCount * 31 + _roundNumber * 7919);
+            _seed = unchecked(_matchSeed + _roundNumber * 7919);
             _roundManager.Reset();
             _currentScenario = _roundSource.Create(_players, _seed, ScenarioDifficulty.Normal);
             foreach (var player in _players)
@@ -258,7 +262,8 @@ namespace ThiefAndTheNecklace
         {
             EnterPhase(RoundPhase.VoteResolution);
             var candidateSet = _isRunoff ? _runoffCandidates : _players.Select(p => p.PlayerId).ToList();
-            var resolution = _voteManager.Resolve(candidateSet);
+            var eligibleVoters = _players.Select(p => p.PlayerId).ToList();
+            var resolution = _voteManager.Resolve(eligibleVoters, candidateSet);
             if (!resolution.IsResolved && !_isRunoff)
             {
                 _runoffCandidates = new List<string>(resolution.TopCandidates);
@@ -479,9 +484,37 @@ namespace ThiefAndTheNecklace
             AddSpacer(_content, 56);
             AddCentered(_content, "A ROYAL MYSTERY", 16, Gold, true);
             AddCentered(_content, "THIEF\n& THE NECKLACE", 42, Cream, true);
-            AddCentered(_content, "Four players. One hidden Thief. Pieces of the story are in your hands.", 18, Parchment, false);
+            AddCentered(_content, "Four to six players. One hidden Thief. Pieces of the story are in your hands.", 18, Parchment, false);
             AddSpacer(_content, 36);
-            AddButton(_content, "PLAY LOCAL · 4 PLAYERS", StartMatch, true);
+            var playerOptions = new List<string> { "4 players", "5 players", "6 players" };
+            Button startButton = null;
+            var playerCountField = new DropdownField("Players", playerOptions, _playerCount - 4);
+            playerCountField.style.marginBottom = 10;
+            playerCountField.RegisterValueChangedCallback(evt =>
+            {
+                _playerCount = Mathf.Clamp(int.Parse(evt.newValue.Substring(0, 1)), 4, 6);
+                if (startButton != null) startButton.text = "PLAY LOCAL · " + _playerCount + " PLAYERS";
+            });
+            _content.Add(playerCountField);
+            var seedField = new IntegerField("Match seed") { value = _matchSeed };
+            seedField.style.marginBottom = 14;
+            seedField.RegisterValueChangedCallback(evt => _matchSeed = evt.newValue);
+            _content.Add(seedField);
+            startButton = new Button(() =>
+            {
+                _audioService?.PlayCue("ui_confirm");
+                StartMatch();
+            }) { text = "PLAY LOCAL · " + _playerCount + " PLAYERS" };
+            startButton.style.minHeight = 48;
+            startButton.style.marginTop = 5;
+            startButton.style.marginBottom = 7;
+            startButton.style.paddingLeft = 16;
+            startButton.style.paddingRight = 16;
+            startButton.style.unityFontStyleAndWeight = FontStyle.Bold;
+            startButton.style.fontSize = Mathf.RoundToInt(15 * UIPresentationSettings.TextScale);
+            startButton.style.color = UIPresentationSettings.HighContrast ? HighContrastInk : Ink;
+            startButton.style.backgroundColor = UIPresentationSettings.HighContrast ? HighContrastCream : Gold;
+            _content.Add(startButton);
             AddButton(_content, "PLAYER PROFILE · LEVEL " + LevelService.GetLevel(_profileService.Current.totalXp), () => { _view = View.Profile; Render(); }, false);
             AddButton(_content, "HOW TO PLAY", () => { _view = View.HowToPlay; Render(); }, false);
             AddButton(_content, "SETTINGS & ACCESSIBILITY", () => { _view = View.Settings; Render(); }, false);

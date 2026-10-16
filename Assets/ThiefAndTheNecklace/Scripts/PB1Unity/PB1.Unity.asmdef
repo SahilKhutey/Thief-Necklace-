@@ -1,0 +1,16 @@
+{
+  "name": "ThiefAndTheNecklace.PB1.Unity",
+  "rootNamespace": "ThiefAndTheNecklace.PB1.Unity",
+  "references": [
+    "ThiefAndTheNecklace.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

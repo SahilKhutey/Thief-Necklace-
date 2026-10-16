@@ -108,7 +108,7 @@ namespace ThiefAndTheNecklace
             new RoleDefinition("minister", "Minister", 6, "A trusted court official."),
             new RoleDefinition("soldier", "Soldier", 5, "A disciplined palace defender."),
             new RoleDefinition("servant", "Servant", 4, "An observant member of the household."),
-            new RoleDefinition("guard", "Guard", 3, "A palace security officer.")
+            new RoleDefinition("guard", "Guard", 5, "A palace security officer.")
         };
 
         public static readonly RoleDefinition[] FourPlayerRoles = { AllRoles[0], AllRoles[2], AllRoles[3], AllRoles[4] };

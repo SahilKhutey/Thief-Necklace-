@@ -13,6 +13,8 @@ namespace ThiefAndTheNecklace.Editor
     {
         private const string ScenePath = "Assets/ThiefAndTheNecklace/Scenes/Bootstrap.unity";
         private const string ScenarioRegistryPath = "Assets/ThiefAndTheNecklace/Resources/ScenarioRegistry.asset";
+        private const string Pb1ScenarioPath = "Assets/ThiefAndTheNecklace/Resources/PB1/RoyalNecklace.asset";
+        private const string Pb1RoleDirectory = "Assets/ThiefAndTheNecklace/Data/Roles/PB1";
 
         static PB1ProjectSetup()
         {
@@ -23,6 +25,7 @@ namespace ThiefAndTheNecklace.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!File.Exists(ScenarioRegistryPath)) ScenarioBuilderWindow.CreateDefaultAssets();
+            EnsurePb1Assets();
             if (!File.Exists(ScenePath))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -38,6 +41,21 @@ namespace ThiefAndTheNecklace.Editor
                 if (scene.path == ScenePath && scene.enabled) included = true;
             if (!included)
                 EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+        }
+
+        private static void EnsurePb1Assets()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(Pb1ScenarioPath));
+            Directory.CreateDirectory(Pb1RoleDirectory);
+            if (!File.Exists(Pb1ScenarioPath))
+                AssetDatabase.CreateAsset(ThiefAndTheNecklace.PB1.ScenarioDefinition.CreateDefault(), Pb1ScenarioPath);
+            foreach (ThiefAndTheNecklace.PB1.RoleType role in System.Enum.GetValues(typeof(ThiefAndTheNecklace.PB1.RoleType)))
+            {
+                if (role == ThiefAndTheNecklace.PB1.RoleType.Thief) continue;
+                var rolePath = Path.Combine(Pb1RoleDirectory, role + ".asset").Replace('\\', '/');
+                if (!File.Exists(rolePath)) AssetDatabase.CreateAsset(ThiefAndTheNecklace.PB1.RoleDefinition.CreateDefault(role), rolePath);
+            }
+            AssetDatabase.SaveAssets();
         }
     }
 }

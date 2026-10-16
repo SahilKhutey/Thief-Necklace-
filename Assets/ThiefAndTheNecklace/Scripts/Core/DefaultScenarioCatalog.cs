@@ -70,7 +70,7 @@ namespace ThiefAndTheNecklace
                 Role("minister", "Minister", 6, "A trusted court official.", "royal", "administrative"),
                 Role("soldier", "Soldier", 5, "A disciplined palace defender.", "royal", "security"),
                 Role("servant", "Servant", 4, "An observant member of the household.", "royal", "service"),
-                Role("guard", "Guard", 3, "A palace security officer.", "royal", "security")
+                Role("guard", "Guard", 5, "A palace security officer.", "royal", "security")
             };
         }
 

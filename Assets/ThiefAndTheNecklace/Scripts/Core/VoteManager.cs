@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace ThiefAndTheNecklace
 {
     public sealed class VoteManager
     {
         private readonly Dictionary<string, string> _votes = new Dictionary<string, string>();
-        public IReadOnlyDictionary<string, string> Votes => _votes;
+        private readonly ReadOnlyDictionary<string, string> _readOnlyVotes;
+        public VoteManager() { _readOnlyVotes = new ReadOnlyDictionary<string, string>(_votes); }
+        public IReadOnlyDictionary<string, string> Votes => _readOnlyVotes;
         public int Count => _votes.Count;
 
         public bool SubmitVote(string voterId, string targetId, IReadOnlyCollection<string> validVoters, IReadOnlyCollection<string> validTargets)
@@ -23,9 +26,17 @@ namespace ThiefAndTheNecklace
 
         public VoteResolution Resolve(IReadOnlyCollection<string> validPlayers)
         {
-            if (validPlayers == null) throw new ArgumentNullException(nameof(validPlayers));
+            return Resolve(validPlayers, validPlayers);
+        }
+
+        public VoteResolution Resolve(IReadOnlyCollection<string> validVoters, IReadOnlyCollection<string> validTargets)
+        {
+            if (validVoters == null) throw new ArgumentNullException(nameof(validVoters));
+            if (validTargets == null) throw new ArgumentNullException(nameof(validTargets));
+            if (_votes.Count != validVoters.Count || validVoters.Any(id => !_votes.ContainsKey(id)))
+                throw new InvalidOperationException("Every eligible player must submit exactly one vote before resolution.");
             var counts = new Dictionary<string, int>();
-            foreach (var playerId in validPlayers) counts[playerId] = 0;
+            foreach (var playerId in validTargets) counts[playerId] = 0;
             foreach (var pair in _votes)
             {
                 if (!counts.ContainsKey(pair.Value)) continue;

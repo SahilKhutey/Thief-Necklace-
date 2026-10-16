@@ -6,15 +6,9 @@ namespace ThiefAndTheNecklace.Tests
 {
     public sealed class CoreGameplayTests
     {
-        private static List<PlayerData> CreatePlayers()
+        private static List<PlayerData> CreatePlayers(int count = 4)
         {
-            return new List<PlayerData>
-            {
-                new PlayerData("P1", "Player 1"),
-                new PlayerData("P2", "Player 2"),
-                new PlayerData("P3", "Player 3"),
-                new PlayerData("P4", "Player 4")
-            };
+            return Enumerable.Range(1, count).Select(i => new PlayerData("P" + i, "Player " + i)).ToList();
         }
 
         [Test]
@@ -45,6 +39,27 @@ namespace ThiefAndTheNecklace.Tests
             }
         }
 
+        [TestCase(4)]
+        [TestCase(5)]
+        [TestCase(6)]
+        public void RoleAssignment_SupportsFourThroughSixPlayers(int count)
+        {
+            var players = CreatePlayers(count);
+            new RoleManager().AssignRoles(players, 10001);
+
+            Assert.That(players.Count(p => p.IsThief), Is.EqualTo(1));
+            Assert.That(players.Select(p => p.RoleId).Distinct().Count(), Is.EqualTo(count));
+        }
+
+        [Test]
+        public void RoleAssignment_RejectsDuplicatePlayerIds()
+        {
+            var players = CreatePlayers();
+            players[1].PlayerId = players[0].PlayerId;
+
+            Assert.Throws<System.ArgumentException>(() => new RoleManager().AssignRoles(players, 1));
+        }
+
         [Test]
         public void VoteManager_RejectsSelfVoteAndDuplicateVote()
         {
@@ -71,6 +86,25 @@ namespace ThiefAndTheNecklace.Tests
             Assert.That(result.IsResolved, Is.True);
             Assert.That(result.WinnerId, Is.EqualTo("P2"));
             Assert.That(result.Counts["P2"], Is.EqualTo(3));
+        }
+
+        [Test]
+        public void VoteManager_RejectsResolutionUntilEveryPlayerVotes()
+        {
+            var manager = new VoteManager();
+            IReadOnlyCollection<string> players = new[] { "P1", "P2", "P3", "P4" };
+            manager.SubmitVote("P1", "P2", players, players);
+
+            Assert.Throws<System.InvalidOperationException>(() => manager.Resolve(players));
+        }
+
+        [Test]
+        public void VoteManager_RejectsUnknownTargets()
+        {
+            var manager = new VoteManager();
+            IReadOnlyCollection<string> players = new[] { "P1", "P2", "P3", "P4" };
+
+            Assert.That(manager.SubmitVote("P1", "P9", players, players), Is.False);
         }
 
         [Test]
@@ -128,6 +162,12 @@ namespace ThiefAndTheNecklace.Tests
             Assert.That(result.Deltas["P1"], Is.EqualTo(0));
             Assert.That(result.Deltas["P2"], Is.EqualTo(0));
             Assert.That(result.Deltas["P3"], Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RoleCatalog_GuardUsesLockedFivePointValue()
+        {
+            Assert.That(RoleCatalog.Find("guard").PointValue, Is.EqualTo(5));
         }
 
         [Test]
