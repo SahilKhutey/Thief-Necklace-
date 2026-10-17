@@ -508,6 +508,7 @@ namespace ThiefAndTheNecklace
             var subtitle = VisualComponents.Text("Four to six players. One hidden Thief. Every clue brings the palace closer to the truth.", "tn-body");
             subtitle.AddToClassList("tn-menu-subtitle");
             shell.Add(subtitle);
+            shell.Add(new PalaceVectorArtwork());
             var actions = new VisualElement();
             actions.AddToClassList("tn-menu-actions");
             shell.Add(actions);
@@ -562,6 +563,8 @@ namespace ThiefAndTheNecklace
         private void RenderIntro()
         {
             AddTitle(_content, _currentScenario.title);
+            var keyLocation = _currentScenario.events.FirstOrDefault(e => e.critical)?.locationId ?? "hall";
+            _content.Add(new PalaceVectorArtwork(keyLocation));
             AddScenarioIllustration(_content);
             AddCard(_content, "THE INCIDENT", _currentScenario.publicDescription);
             AddText(_content, "The Royal Palace\nBanquet Hall · Royal Chamber · Treasury · East Corridor · West Gate · Garden", 17, Parchment, false);
@@ -581,6 +584,7 @@ namespace ThiefAndTheNecklace
             }
 
             var role = RoleCatalog.Find(player.RoleId);
+            _content.Add(new CourtRoleVectorPortrait(player.RoleId));
             AddCard(_content, "YOUR ROLE", role == null ? "Unknown" : role.DisplayName + " · " + role.PointValue + " points\n" + role.Description);
             AddCard(_content, player.IsThief ? "YOUR OBJECTIVE · THIEF" : "YOUR OBJECTIVE · INNOCENT", player.IsThief ? "Avoid detection. Blend into the story and survive the vote." : "Compare clues and identify the Thief.");
             AddCard(_content, "YOUR SITUATION", player.PrivateSituation);
@@ -702,6 +706,7 @@ namespace ThiefAndTheNecklace
 
         private void RenderReveal()
         {
+            _content.Add(new PalaceVectorArtwork(PalaceVectorArtwork.Motif.Necklace));
             AddSpacer(_content, 18);
             AddCentered(_content, "THE TRUTH", 18, Gold, true);
             var accused = _reveal.AccusedPlayerId == null ? "NO CLEAR ACCUSATION" : _players.First(p => p.PlayerId == _reveal.AccusedPlayerId).DisplayName.ToUpperInvariant();
@@ -712,9 +717,11 @@ namespace ThiefAndTheNecklace
             {
                 var accusedPlayer = _players.First(p => p.PlayerId == _reveal.AccusedPlayerId);
                 var role = RoleCatalog.Find(accusedPlayer.RoleId);
+                _content.Add(new CourtRoleVectorPortrait(accusedPlayer.RoleId));
                 AddCard(_content, "ACCUSED ROLE", (role == null ? "Unknown" : role.DisplayName) + (_reveal.ThiefCaught ? " · THIEF" : " · INNOCENT"));
             }
             var thief = _players.First(p => p.PlayerId == _reveal.ThiefPlayerId);
+            _content.Add(new CourtRoleVectorPortrait(thief.RoleId));
             var target = _currentScenario.world.Objects.First(o => o.id == _currentScenario.targetObjectId);
             AddCard(_content, _reveal.ThiefCaught ? "THE " + target.displayName.ToUpperInvariant() + " IS RECOVERED" : "THE THIEF ESCAPED", "The Thief was " + thief.DisplayName + " (" + RoleCatalog.Find(thief.RoleId).DisplayName + "). The stolen object was " + target.displayName + ".");
             AddSection(_content, "WHAT ACTUALLY HAPPENED");
