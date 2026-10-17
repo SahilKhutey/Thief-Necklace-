@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ThiefAndTheNecklace.Content;
 using ThiefAndTheNecklace.UI;
+using ThiefAndTheNecklace.Visual;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,11 +15,11 @@ namespace ThiefAndTheNecklace
         private const float DiscussionDuration = 180f;
         private const int DefaultPlayerCount = 4;
         private const int DefaultMatchSeed = 10001;
-        private static Color Ink = new Color(0.13f, 0.10f, 0.08f);
-        private static Color Panel = new Color(0.20f, 0.15f, 0.11f);
-        private static Color Parchment = new Color(0.88f, 0.79f, 0.61f);
-        private static Color Gold = new Color(0.78f, 0.60f, 0.27f);
-        private static Color Cream = new Color(0.96f, 0.91f, 0.78f);
+        private static Color Ink = VisualDesignTokens.DeepInk;
+        private static Color Panel = VisualDesignTokens.RoyalSurface;
+        private static Color Parchment = VisualDesignTokens.Parchment;
+        private static Color Gold = VisualDesignTokens.AntiqueGold;
+        private static Color Cream = VisualDesignTokens.WarmIvory;
         private static readonly Color HighContrastInk = Color.black;
         private static readonly Color HighContrastCream = Color.white;
 
@@ -98,6 +99,8 @@ namespace ThiefAndTheNecklace
             _profileService = new ProfileService(new LocalProfileRepository());
             _profileService.Load("local-player");
             _root = _document.rootVisualElement;
+            var designTokens = Resources.Load<StyleSheet>("DesignTokens");
+            if (designTokens != null) _root.styleSheets.Add(designTokens);
             _root.style.flexGrow = 1;
             _root.style.backgroundColor = Ink;
             _root.style.color = Cream;
@@ -433,6 +436,7 @@ namespace ThiefAndTheNecklace
             header.style.borderBottomColor = Gold;
             header.style.paddingBottom = 12;
             header.style.marginBottom = 16;
+            if (_view == View.MainMenu) header.style.display = DisplayStyle.None;
             _root.Add(header);
             var title = NewLabel("THIEF & THE NECKLACE", 18, Gold, true);
             title.style.unityTextAlign = TextAnchor.MiddleLeft;
@@ -477,50 +481,82 @@ namespace ThiefAndTheNecklace
             _root.style.paddingRight = inset;
             _root.style.paddingTop = compact ? 12 : 24;
             _root.style.paddingBottom = compact ? 12 : 24;
+            var menuOptions = _root.Q<VisualElement>(className: "tn-menu-options");
+            if (menuOptions != null)
+                menuOptions.style.flexDirection = compact ? FlexDirection.Column : FlexDirection.Row;
+            var menuTitle = _root.Q<Label>(className: "tn-menu-title");
+            if (menuTitle != null) menuTitle.style.fontSize = compact ? 32 : 40;
+            var menuCrest = _root.Q<Label>(className: "tn-menu-crest");
+            if (menuCrest != null)
+            {
+                menuCrest.style.width = compact ? 60 : 72;
+                menuCrest.style.height = compact ? 60 : 72;
+            }
         }
 
         private void RenderMainMenu()
         {
-            AddSpacer(_content, 56);
-            AddCentered(_content, "A ROYAL MYSTERY", 16, Gold, true);
-            AddCentered(_content, "THIEF\n& THE NECKLACE", 42, Cream, true);
-            AddCentered(_content, "Four to six players. One hidden Thief. Pieces of the story are in your hands.", 18, Parchment, false);
-            AddSpacer(_content, 36);
+            _content.AddToClassList("tn-page");
+            var shell = VisualComponents.Panel("tn-menu-shell");
+            _content.Add(shell);
+            var crest = VisualComponents.Text("♛", "tn-menu-crest");
+            shell.Add(crest);
+            shell.Add(VisualComponents.Text("A ROYAL MYSTERY", "tn-headline"));
+            var title = VisualComponents.Text("THIEF & THE NECKLACE", "tn-display");
+            title.AddToClassList("tn-menu-title");
+            shell.Add(title);
+            var subtitle = VisualComponents.Text("Four to six players. One hidden Thief. Every clue brings the palace closer to the truth.", "tn-body");
+            subtitle.AddToClassList("tn-menu-subtitle");
+            shell.Add(subtitle);
+            var actions = new VisualElement();
+            actions.AddToClassList("tn-menu-actions");
+            shell.Add(actions);
             var playerOptions = new List<string> { "4 players", "5 players", "6 players" };
             Button startButton = null;
             var playerCountField = new DropdownField("Players", playerOptions, _playerCount - 4);
             playerCountField.style.marginBottom = 10;
+            playerCountField.style.color = Cream;
             playerCountField.RegisterValueChangedCallback(evt =>
             {
                 _playerCount = Mathf.Clamp(int.Parse(evt.newValue.Substring(0, 1)), 4, 6);
-                if (startButton != null) startButton.text = "PLAY LOCAL · " + _playerCount + " PLAYERS";
+                if (startButton != null) startButton.text = "BEGIN LOCAL MATCH · " + _playerCount + " PLAYERS";
             });
-            _content.Add(playerCountField);
+            actions.Add(playerCountField);
             var seedField = new IntegerField("Match seed") { value = _matchSeed };
             seedField.style.marginBottom = 14;
+            seedField.style.color = Cream;
             seedField.RegisterValueChangedCallback(evt => _matchSeed = evt.newValue);
-            _content.Add(seedField);
-            startButton = new Button(() =>
+            actions.Add(seedField);
+            startButton = VisualComponents.Button("BEGIN LOCAL MATCH · " + _playerCount + " PLAYERS", () =>
             {
                 _audioService?.PlayCue("ui_confirm");
                 StartMatch();
-            }) { text = "PLAY LOCAL · " + _playerCount + " PLAYERS" };
-            startButton.style.minHeight = 48;
-            startButton.style.marginTop = 5;
-            startButton.style.marginBottom = 7;
-            startButton.style.paddingLeft = 16;
-            startButton.style.paddingRight = 16;
-            startButton.style.unityFontStyleAndWeight = FontStyle.Bold;
-            startButton.style.fontSize = Mathf.RoundToInt(15 * UIPresentationSettings.TextScale);
-            startButton.style.color = UIPresentationSettings.HighContrast ? HighContrastInk : Ink;
-            startButton.style.backgroundColor = UIPresentationSettings.HighContrast ? HighContrastCream : Gold;
-            _content.Add(startButton);
-            AddButton(_content, "PLAYER PROFILE · LEVEL " + LevelService.GetLevel(_profileService.Current.totalXp), () => { _view = View.Profile; Render(); }, false);
-            AddButton(_content, "HOW TO PLAY", () => { _view = View.HowToPlay; Render(); }, false);
-            AddButton(_content, "SETTINGS & ACCESSIBILITY", () => { _view = View.Settings; Render(); }, false);
-            AddText(_content, "Online rooms are not connected in this build.", 13, Parchment, false);
-            AddCentered(_content, "Pass-and-play prototype · 5 rounds · 3-minute discussion", 13, Parchment, false);
-            AddCentered(_content, "Local pass-and-play cannot prevent a nearby player from seeing the screen. Use the handoff prompt between secrets.", 12, Parchment, false);
+            }, true);
+            startButton.AddToClassList("tn-menu-action");
+            startButton.style.minHeight = 56;
+            startButton.style.fontSize = Mathf.RoundToInt(16 * UIPresentationSettings.TextScale);
+            if (UIPresentationSettings.HighContrast) startButton.style.backgroundColor = HighContrastCream;
+            actions.Add(startButton);
+
+            var secondary = new VisualElement();
+            secondary.AddToClassList("tn-menu-options");
+            shell.Add(secondary);
+            var profileButton = VisualComponents.Button("PROFILE · LEVEL " + LevelService.GetLevel(_profileService.Current.totalXp), () => { _view = View.Profile; Render(); });
+            profileButton.AddToClassList("tn-menu-action");
+            secondary.Add(profileButton);
+            var howToButton = VisualComponents.Button("HOW TO PLAY", () => { _view = View.HowToPlay; Render(); });
+            howToButton.AddToClassList("tn-menu-action");
+            secondary.Add(howToButton);
+            var settingsButton = VisualComponents.Button("SETTINGS", () => { _view = View.Settings; Render(); });
+            settingsButton.AddToClassList("tn-menu-action");
+            secondary.Add(settingsButton);
+
+            var rule = new VisualElement();
+            rule.AddToClassList("tn-menu-rule");
+            shell.Add(rule);
+            shell.Add(VisualComponents.Text("PASS-AND-PLAY · FIVE ROUNDS · THREE-MINUTE DISCUSSION", "tn-caption"));
+            shell.Add(VisualComponents.Text("Online rooms are not connected in this build.", "tn-caption"));
+            shell.Add(VisualComponents.Text("Use the private handoff between secrets so other players cannot see your role or clues.", "tn-caption"));
         }
 
         private void RenderIntro()

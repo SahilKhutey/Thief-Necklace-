@@ -45,6 +45,7 @@ namespace ThiefAndTheNecklace.UI
             if (root == null) return;
             root.EnableInClassList("tn-high-contrast", HighContrast);
             root.EnableInClassList("tn-large-text", LargeText);
+            root.EnableInClassList("tn-reduced-motion", ReducedMotion);
         }
 
         private static void Set(string key, bool value)

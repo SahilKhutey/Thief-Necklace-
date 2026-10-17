@@ -15,6 +15,8 @@ namespace ThiefAndTheNecklace.PB1.Unity
         [SerializeField] private List<string> playerNames = new List<string> { "Player 1", "Player 2", "Player 3", "Player 4" };
 
         public GameController Controller { get; private set; }
+        public GameTimer Timer { get { return gameTimer; } }
+        public bool HasRevealController { get { return revealController != null; } }
 
         private void Start()
         {

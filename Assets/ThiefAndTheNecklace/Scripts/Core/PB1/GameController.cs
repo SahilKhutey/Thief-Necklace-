@@ -86,6 +86,27 @@ namespace ThiefAndTheNecklace.PB1
                 .ToList();
         }
 
+        /// <summary>Public score rows are available only after the round's score has been committed.</summary>
+        public IReadOnlyList<RoundScoreViewData> GetRoundScoreboard()
+        {
+            if (_state == null) throw new InvalidOperationException("No match has started.");
+            if (_state.Phase != RoundPhase.Scoring && _state.Phase != RoundPhase.RoundEnd && _state.Phase != RoundPhase.MatchEnd)
+                throw new InvalidOperationException("Round scores are available only after scoring.");
+            return _state.Players
+                .OrderByDescending(p => p.MatchScore)
+                .ThenBy(p => p.PlayerId)
+                .Select(p => new RoundScoreViewData { PlayerId = p.PlayerId, DisplayName = p.DisplayName, RoundScore = p.RoundScore, MatchScore = p.MatchScore })
+                .ToList().AsReadOnly();
+        }
+
+        /// <summary>Returns aggregate progress only; individual vote choices remain private until resolution.</summary>
+        public VoteProgressViewData GetVoteProgress()
+        {
+            EnsurePhase(RoundPhase.Voting);
+            var eligible = _state.Players.Where(p => p.Connected).ToList();
+            return new VoteProgressViewData(eligible.Count(p => p.HasSubmittedVote), eligible.Count);
+        }
+
         public PrivatePlayerViewData GetPrivateView(int playerId, int authenticatedRequesterId)
         {
             EnsureStarted();
