@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="badge" class="tan-badge tan-badge--neutral">
+        <ui:Label name="label" class="tan-badge__label" />
+    </ui:VisualElement>
+</ui:UXML>

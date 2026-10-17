@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="message" class="tan-chat-message">
+        <ui:VisualElement name="avatar" class="tan-avatar">
+            <ui:VisualElement name="portrait" class="tan-avatar__portrait" />
+        </ui:VisualElement>
+        <ui:VisualElement name="body" class="tan-chat-message__body">
+            <ui:VisualElement class="tan-chat-message__meta">
+                <ui:Label name="sender" class="tan-chat-message__sender" />
+                <ui:Label name="timestamp" class="tan-chat-message__timestamp" />
+            </ui:VisualElement>
+            <ui:Label name="content" class="tan-chat-message__content" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

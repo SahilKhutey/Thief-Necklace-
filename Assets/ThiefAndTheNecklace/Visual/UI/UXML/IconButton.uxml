@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:Button name="button" class="tan-icon-button">
+        <ui:VisualElement name="icon" class="tan-icon-button__icon" />
+    </ui:Button>
+</ui:UXML>

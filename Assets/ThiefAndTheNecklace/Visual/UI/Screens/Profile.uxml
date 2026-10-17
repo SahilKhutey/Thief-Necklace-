@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <Style src="../Foundations/Resources/DesignTokens.uss"/><Style src="../USS/TANComponents.uss"/><Style src="PV2Screens.uss"/>
+  <ui:VisualElement name="screen-root" class="tn-screen pv2-screen"><ui:VisualElement class="tn-screen-background pv2-background"/><ui:VisualElement class="pv2-frame">
+    <ui:VisualElement class="pv2-topbar"><ui:Button name="screen-back" text="‹" class="tan-icon-button"/><ui:Label name="screen-title" text="PROFILE" class="pv2-top-title"/><ui:Label name="screen-status" text="" class="tan-badge tan-badge--info"/></ui:VisualElement>
+    <ui:VisualElement class="pv2-content"><ui:Label name="screen-subtitle" text="YOUR ROYAL RECORD" class="tn-headline"/><ui:VisualElement name="primary-content" class="pv2-primary-content">
+      <ui:VisualElement class="tan-panel"><ui:Label name="profile-name" text="PLAYER" class="pv2-screen-heading"/><ui:Label text="LEVEL" class="tn-headline"/><ui:Label name="profile-level" text="1" class="tan-score__value"/><ui:Label text="TOTAL EXPERIENCE" class="tn-headline"/><ui:Label name="profile-xp" text="0" class="tan-score__value"/></ui:VisualElement>
+      <ui:VisualElement class="tan-panel"><ui:Label text="CAREER" class="tn-headline"/><ui:Label text="Matches played" class="tn-body"/><ui:Label name="profile-matches" text="0" class="tan-score__value"/><ui:Label text="Mysteries solved" class="tn-body"/><ui:Label name="profile-solved" text="0" class="tan-score__value"/></ui:VisualElement>
+      <ui:Button name="screen-back" text="DONE" class="tan-button tan-button--primary"/>
+    </ui:VisualElement></ui:VisualElement>
+  </ui:VisualElement></ui:VisualElement>
+</ui:UXML>

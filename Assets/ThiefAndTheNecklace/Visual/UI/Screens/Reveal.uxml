@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <Style src="../Foundations/Resources/DesignTokens.uss"/><Style src="../USS/TANComponents.uss"/><Style src="PV2Screens.uss"/>
+  <ui:VisualElement name="screen-root" class="tn-screen pv2-screen">
+    <ui:VisualElement class="tn-screen-background pv2-background"/>
+    <ui:VisualElement class="pv2-frame">
+      <ui:VisualElement class="pv2-topbar"><ui:Button name="screen-back" text="‹" class="tan-icon-button"/><ui:Label name="screen-title" text="THE REVEAL" class="pv2-top-title"/><ui:Label name="screen-status" text="" class="tan-badge tan-badge--info"/></ui:VisualElement>
+      <ui:VisualElement class="pv2-content">
+        <ui:Label name="screen-subtitle" text="THE ACCUSED PLAYER" class="tn-headline"/>
+        <ui:VisualElement name="primary-content" class="pv2-primary-content">
+          <ui:VisualElement class="tan-role-card tan-role-card--revealing">
+            <ui:VisualElement class="tan-role-card__frame"><ui:Label name="revealed-role" text="ROLE REVEALED" class="tan-role-card__name"/><ui:VisualElement name="revealed-artwork" class="tan-role-card__artwork"/><ui:Label text="Authorized reveal art" class="tn-caption"/></ui:VisualElement>
+          </ui:VisualElement>
+          <ui:Label name="outcome" text="ROUND OUTCOME" class="pv2-screen-heading"/>
+          <ui:VisualElement class="tan-panel"><ui:Label text="SCORE CHANGE" class="tn-headline"/><ui:Label name="score-delta" text="+0" class="tan-score__delta"/></ui:VisualElement>
+          <ui:Button name="go-round-results" text="CONTINUE TO RESULTS" class="tan-button tan-button--primary"/>
+        </ui:VisualElement>
+      </ui:VisualElement>
+      <ui:VisualElement name="screen-overlay" class="tn-screen-overlay"/>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

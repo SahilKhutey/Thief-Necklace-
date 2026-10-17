@@ -1,0 +1,17 @@
+.tn-screen {
+    flex-grow: 1;
+    position: relative;
+}
+
+.tn-screen-background,
+.tn-screen-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.tn-screen-background { }
+.tn-screen-content { flex-grow: 1; position: relative; }
+.tn-screen-overlay { }

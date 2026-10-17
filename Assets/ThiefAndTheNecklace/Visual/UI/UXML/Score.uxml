@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="score" class="tan-score">
+        <ui:VisualElement class="tan-score__round">
+            <ui:Label text="ROUND" class="tan-score__caption" />
+            <ui:Label name="round-delta" text="+0" class="tan-score__delta" />
+        </ui:VisualElement>
+        <ui:VisualElement class="tan-score__total">
+            <ui:Label text="TOTAL" class="tan-score__caption" />
+            <ui:Label name="total" text="0" class="tan-score__value" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

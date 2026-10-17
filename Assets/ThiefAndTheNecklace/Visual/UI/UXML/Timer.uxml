@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="timer" class="tan-timer tan-timer--normal">
+        <ui:Label name="heading" text="DISCUSSION" class="tan-timer__heading" />
+        <ui:Label name="time" text="03:00" class="tan-timer__time" />
+        <ui:Label name="state-label" class="tan-timer__state" />
+        <ui:VisualElement name="track" class="tan-timer__track">
+            <ui:VisualElement name="progress" class="tan-timer__progress" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

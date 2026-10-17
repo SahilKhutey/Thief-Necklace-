@@ -1,0 +1,221 @@
+/* PV1 shared component language. Token values follow VisualDesignTokens and TanColorPalette. */
+.tan-button {
+    min-height: 56px;
+    padding-left: var(--space-5, 24px);
+    padding-right: var(--space-5, 24px);
+    background-color: var(--royal-gold, #c69a45);
+    color: var(--royal-ink, #211813);
+    border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px;
+    border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45);
+    border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px);
+    transition-property: translate, scale, opacity;
+    transition-duration: var(--motion-fast, 0.10s);
+    transition-timing-function: ease-out;
+}
+.tan-button__highlight { position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); background-color: rgba(255,255,255,0); }
+.tan-button__content { flex-direction: row; align-items: center; justify-content: center; }
+.tan-button__icon { width: 20px; height: 20px; margin-right: var(--space-2, 8px); -unity-background-scale-mode: scale-to-fit; }
+.tan-button__label { font-size: 18px; -unity-font-style: bold; white-space: normal; -unity-text-align: middle-center; }
+.tan-button__loading { display: none; position: absolute; left: 0; right: 0; top: 0; bottom: 0; align-items: center; justify-content: center; }
+.tan-button--primary { background-color: var(--royal-gold, #c69a45); color: var(--royal-ink, #211813); }
+.tan-button--secondary { background-color: var(--royal-surface, #382920); color: var(--royal-ivory, #f5ecd0); }
+.tan-button--ghost { background-color: rgba(0,0,0,0); color: var(--royal-ivory, #f5ecd0); }
+.tan-button--danger { background-color: var(--royal-burgundy, #692d3c); color: var(--royal-ivory, #f5ecd0); border-top-color: var(--royal-error, #b64c47); border-right-color: var(--royal-error, #b64c47); border-bottom-color: var(--royal-error, #b64c47); border-left-color: var(--royal-error, #b64c47); }
+.tan-button--success { background-color: var(--royal-success, #57906a); color: var(--royal-ivory, #f5ecd0); }
+.tan-button--error { background-color: var(--royal-error, #b64c47); color: var(--royal-ivory, #f5ecd0); }
+.tan-button:hover .tan-button__highlight { background-color: rgba(255,255,255,0.08); }
+.tan-button:active { opacity: 0.84; }
+.tan-button:focus { border-bottom-width: 3px; border-bottom-color: var(--royal-ivory, #f5ecd0); }
+.tan-button:disabled { opacity: 0.65; background-color: var(--royal-muted-surface, #51483e); color: var(--royal-parchment, #d8c49b); }
+.tan-is-loading .tan-button__content { display: none; }
+.tan-is-loading .tan-button__loading { display: flex; }
+.tan-is-focused { border-bottom-width: 3px; border-bottom-color: var(--royal-ivory, #f5ecd0); }
+.tan-is-selected { border-bottom-width: 3px; border-bottom-color: var(--royal-gold, #c69a45); }
+.tan-button.tan-is-selected { translate: 0 -4px; scale: 1.02 1.02; transition-property: translate, scale, opacity; transition-duration: 0.14s; }
+.tan-button:hover { translate: 0 -2px; }
+.tn-reduced-motion .tan-button:hover, .tn-reduced-motion .tan-button.tan-is-selected { translate: 0 0; scale: 1 1; }
+.pv4-vote-tie { color: #f0bd63; }
+
+.tan-panel { padding: var(--space-4, 16px); background-color: var(--royal-surface, #382920); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-color: var(--royal-border, #896b3d); border-right-color: var(--royal-border, #896b3d); border-bottom-color: var(--royal-border, #896b3d); border-left-color: var(--royal-border, #896b3d); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); }
+.tan-panel__decoration { height: 2px; background-color: var(--royal-gold, #c69a45); margin-bottom: var(--space-3, 12px); }
+.tan-panel__header { color: var(--royal-gold, #c69a45); font-size: 16px; -unity-font-style: bold; margin-bottom: var(--space-3, 12px); }
+.tan-panel__content { flex-grow: 1; }
+.tan-panel__footer { margin-top: var(--space-3, 12px); }
+.tan-panel--information { border-left-width: 3px; border-left-color: var(--royal-gold, #c69a45); }
+.tan-panel--cinematic { border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: var(--radius-lg, 24px); border-top-right-radius: var(--radius-lg, 24px); border-bottom-left-radius: var(--radius-lg, 24px); border-bottom-right-radius: var(--radius-lg, 24px); }
+
+.tan-role-card { width: 230px; height: 340px; padding: var(--space-2, 8px); background-color: var(--royal-ink, #211813); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); }
+.tan-role-card__frame { flex-grow: 1; align-items: center; padding: 10px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-color: var(--royal-border, #896b3d); border-right-color: var(--royal-border, #896b3d); border-bottom-color: var(--royal-border, #896b3d); border-left-color: var(--royal-border, #896b3d); }
+.tan-role-card__crest { width: 24px; height: 24px; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; background-color: var(--royal-gold, #c69a45); margin-bottom: var(--space-1, 4px); }
+.tan-role-card__name { color: var(--royal-ivory, #f5ecd0); font-size: 18px; -unity-font-style: bold; -unity-text-align: middle-center; white-space: normal; }
+.tan-role-card__artwork { width: 100%; flex-grow: 1; margin-top: var(--space-2, 8px); margin-bottom: var(--space-2, 8px); background-color: var(--royal-surface-raised, #49372a);  }
+.tan-role-card__value { color: var(--royal-gold, #c69a45); font-size: 20px; -unity-font-style: bold; }
+  .tan-visual-missing-art { flex-grow: 1; align-items: center; justify-content: center; color: #f5ecd0; background-color: #692d3c; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: #c69a45; border-right-color: #c69a45; border-bottom-color: #c69a45; border-left-color: #c69a45; white-space: normal; -unity-text-align: middle-center; -unity-font-style: bold; }
+.tan-role-card__footer { height: 4px; width: 72%; margin-top: 6px; background-color: var(--royal-border, #896b3d); }
+.tan-role-card__back-emblem { display: none; flex-grow: 1; align-items: center; justify-content: center; background-color: var(--royal-ink-soft, #30231c); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+.tan-role-card__back-crest { color: var(--royal-gold, #c69a45); font-size: 44px; -unity-text-align: middle-center; }
+.tan-role-card__back-necklace { color: var(--royal-ivory, #f5ecd0); font-size: 24px; margin-top: var(--space-3, 12px); -unity-text-align: middle-center; }
+.tan-role-card--back .tan-role-card__frame { display: none; }
+.tan-role-card--back .tan-role-card__back-emblem { display: flex; }
+.tan-role-card--selected { border-bottom-width: 4px; border-bottom-color: var(--royal-gold, #c69a45); }
+.tan-role-card--disabled { opacity: 0.62; }
+.tan-role-card--revealing .tan-role-card__artwork { opacity: 0.72; }
+.tan-role-card--revealed { border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; }
+
+.tan-clue-card { min-width: 220px; padding: var(--space-4, 16px); background-color: var(--royal-clue-surface, #f1e5c5); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); align-items: center; }
+.tan-clue-card__title { color: var(--royal-burgundy, #692d3c); font-size: 14px; -unity-font-style: bold; }
+.tan-clue-card__icon { width: 36px; height: 36px; margin-top: var(--space-2, 8px); margin-bottom: var(--space-2, 8px); -unity-background-scale-mode: scale-to-fit; }
+.tan-clue-card__content { color: var(--royal-ink, #211813); font-size: 16px; white-space: normal; }
+.tan-clue-card__source { color: var(--royal-muted-surface, #51483e); font-size: 12px; margin-top: var(--space-3, 12px); }
+.tan-clue-card__footer { height: 2px; align-self: stretch; margin-top: var(--space-3, 12px); background-color: var(--royal-gold, #c69a45); }
+
+.tan-avatar { width: 64px; height: 64px; align-items: center; justify-content: center; }
+.tan-avatar__portrait { width: 56px; height: 56px; background-color: var(--royal-surface-raised, #49372a); -unity-background-scale-mode: scale-to-fit; border-top-left-radius: 28px; border-top-right-radius: 28px; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); }
+.tan-avatar__name { color: var(--royal-ivory, #f5ecd0); font-size: 12px; -unity-text-align: middle-center; white-space: normal; }
+.tan-avatar__status { color: var(--royal-parchment, #d8c49b); font-size: 10px; -unity-text-align: middle-center; }
+.tan-avatar--selected .tan-avatar__portrait { border-bottom-width: 4px; }
+.tan-avatar--talking .tan-avatar__portrait { border-top-width: 4px; }
+.tan-avatar--disconnected { opacity: 0.68; }
+.tan-avatar--winner .tan-avatar__portrait { border-top-width: 3px; border-bottom-width: 3px; }
+.tan-avatar--accused .tan-avatar__portrait { border-top-color: var(--royal-error, #b64c47); border-right-color: var(--royal-error, #b64c47); border-bottom-color: var(--royal-error, #b64c47); border-left-color: var(--royal-error, #b64c47); }
+.tan-player-card { min-height: 84px; flex-direction: row; align-items: center; padding: var(--space-3, 12px); background-color: var(--royal-surface, #382920); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-color: var(--royal-border, #896b3d); border-right-color: var(--royal-border, #896b3d); border-bottom-color: var(--royal-border, #896b3d); border-left-color: var(--royal-border, #896b3d); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); }
+.tan-player-card__identity { flex-grow: 1; margin-left: var(--space-3, 12px); }
+.tan-player-card__name { color: var(--royal-ivory, #f5ecd0); font-size: 16px; -unity-font-style: bold; white-space: normal; }
+.tan-player-card__status { color: var(--royal-parchment, #d8c49b); font-size: 12px; }
+.tan-player-card__score { color: var(--royal-gold, #c69a45); font-size: 18px; -unity-font-style: bold; margin-left: var(--space-2, 8px); }
+.tan-player-card__state { color: var(--royal-ivory, #f5ecd0); font-size: 11px; margin-left: var(--space-2, 8px); }
+.tan-player-card--selected { border-bottom-width: 3px; border-bottom-color: var(--royal-gold, #c69a45); }
+.tan-player-card--winner { border-left-width: 4px; border-left-color: var(--royal-gold, #c69a45); background-color: rgba(198,154,69,0.12); }
+.tan-player-card--accused { border-top-color: var(--royal-error, #b64c47); border-right-color: var(--royal-error, #b64c47); border-bottom-color: var(--royal-error, #b64c47); border-left-color: var(--royal-error, #b64c47); }
+.tan-player-card--disconnected { opacity: 0.76; }
+.tan-player-card--speaking { border-top-width: 2px; }
+.tan-player-card--voted .tan-player-card__state { -unity-font-style: bold; }
+.tan-player-card--revealed { border-bottom-width: 2px; }
+
+.tan-badge { align-self: flex-start; padding-left: 10px; padding-right: 10px; padding-top: var(--space-1, 4px); padding-bottom: var(--space-1, 4px); background-color: var(--royal-surface-raised, #49372a); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); }
+.tan-badge__label { color: var(--royal-ivory, #f5ecd0); font-size: 11px; -unity-font-style: bold; }
+.tan-badge--success { background-color: var(--royal-forest, #315744); }
+.tan-badge--warning { background-color: var(--royal-warning, #d5a34b); }
+.tan-badge--error { background-color: var(--royal-burgundy, #692d3c); }
+.tan-badge--info { background-color: var(--royal-midnight, #25384d); }
+
+.tan-timer { min-width: 160px; padding: var(--space-3, 12px); align-items: center; background-color: var(--royal-ink-soft, #30231c); border-top-left-radius: var(--radius-md, 14px); border-top-right-radius: var(--radius-md, 14px); border-bottom-left-radius: var(--radius-md, 14px); border-bottom-right-radius: var(--radius-md, 14px); border-bottom-width: 2px; border-bottom-color: var(--royal-gold, #c69a45); }
+.tan-timer__heading { color: var(--royal-parchment, #d8c49b); font-size: 12px; -unity-font-style: bold; }
+.tan-timer__time { color: var(--royal-ivory, #f5ecd0); font-size: 32px; -unity-font-style: bold; }
+.tan-timer__state { color: var(--royal-warning, #d5a34b); font-size: 11px; }
+.tan-timer__track { height: 5px; align-self: stretch; background-color: var(--royal-muted-surface, #51483e); margin-top: var(--space-2, 8px); }
+.tan-timer__progress { height: 5px; width: 100%; background-color: var(--royal-gold, #c69a45); }
+.tan-timer--low .tan-timer__progress, .tan-timer--low .tan-timer__state { background-color: var(--royal-warning, #d5a34b); color: var(--royal-warning, #d5a34b); }
+.tan-timer--critical .tan-timer__progress, .tan-timer--critical .tan-timer__state { background-color: var(--royal-error, #b64c47); color: var(--royal-ivory, #f5ecd0); }
+.tan-timer--complete .tan-timer__time { color: var(--royal-success, #57906a); }
+
+.tan-score { flex-direction: row; align-items: center; }
+.tan-score__round, .tan-score__total { padding: var(--space-2, 8px); align-items: center; }
+.tan-score__caption { color: var(--royal-parchment, #d8c49b); font-size: 11px; }
+.tan-score__delta { color: var(--royal-success, #57906a); font-size: 22px; -unity-font-style: bold; }
+.tan-score__value { color: var(--royal-ivory, #f5ecd0); font-size: 22px; -unity-font-style: bold; }
+
+.tan-chat-message { flex-direction: row; align-items: flex-start; padding: var(--space-2, 8px); background-color: var(--royal-surface, #382920); border-bottom-width: 1px; border-bottom-color: var(--royal-muted-surface, #51483e); }
+.tan-chat-message .tan-avatar { width: 40px; height: 40px; }
+.tan-chat-message .tan-avatar__portrait { width: 36px; height: 36px; }
+.tan-chat-message__body { flex-grow: 1; margin-left: var(--space-2, 8px); }
+.tan-chat-message__meta { flex-direction: row; justify-content: space-between; }
+.tan-chat-message__sender { color: var(--royal-gold, #c69a45); font-size: 13px; -unity-font-style: bold; }
+.tan-chat-message__timestamp { color: var(--royal-parchment, #d8c49b); font-size: 10px; }
+.tan-chat-message__content { color: var(--royal-ivory, #f5ecd0); font-size: 14px; white-space: normal; }
+.tan-chat-message--local { background-color: var(--royal-ink-soft, #30231c); }
+.tan-chat-message--system .tan-chat-message__content { color: var(--royal-parchment, #d8c49b); -unity-font-style: italic; }
+
+.tan-icon-button { min-width: 48px; min-height: 48px; align-items: center; justify-content: center; background-color: var(--royal-surface, #382920); border-top-left-radius: var(--radius-lg, 24px); border-top-right-radius: var(--radius-lg, 24px); border-bottom-left-radius: var(--radius-lg, 24px); border-bottom-right-radius: var(--radius-lg, 24px); }
+.tan-icon-button__icon { width: 22px; height: 22px; -unity-background-scale-mode: scale-to-fit; }
+.tan-modal { position: absolute; left: 0; right: 0; top: 0; bottom: 0; align-items: center; justify-content: center; }
+.tan-modal__backdrop { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(0,0,0,0.72); }
+.tan-modal__frame { width: 88%; max-width: 560px; padding: var(--space-5, 24px); background-color: var(--royal-surface, #382920); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: var(--royal-gold, #c69a45); border-right-color: var(--royal-gold, #c69a45); border-bottom-color: var(--royal-gold, #c69a45); border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: var(--radius-lg, 24px); border-top-right-radius: var(--radius-lg, 24px); border-bottom-left-radius: var(--radius-lg, 24px); border-bottom-right-radius: var(--radius-lg, 24px); }
+.tan-modal__header-row { flex-direction: row; align-items: center; justify-content: space-between; }
+.tan-modal__header { color: var(--royal-ivory, #f5ecd0); font-size: 20px; -unity-font-style: bold; white-space: normal; }
+.tan-modal__close { min-width: 48px; min-height: 48px; color: var(--royal-ivory, #f5ecd0); }
+.tan-modal__body { margin-top: var(--space-3, 12px); margin-bottom: var(--space-4, 16px); }
+.tan-modal__actions { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; }
+.tan-toast { flex-direction: row; align-items: center; padding-left: var(--space-4, 16px); padding-right: var(--space-4, 16px); padding-top: var(--space-3, 12px); padding-bottom: var(--space-3, 12px); background-color: var(--royal-ink-soft, #30231c); border-left-width: 3px; border-left-color: var(--royal-gold, #c69a45); border-top-left-radius: var(--radius-sm, 8px); border-top-right-radius: var(--radius-sm, 8px); border-bottom-left-radius: var(--radius-sm, 8px); border-bottom-right-radius: var(--radius-sm, 8px); }
+.tan-toast__icon { color: var(--royal-gold, #c69a45); font-size: 20px; margin-right: 10px; }
+.tan-toast__message { color: var(--royal-ivory, #f5ecd0); font-size: 14px; white-space: normal; }
+.tan-navigation { min-height: 56px; flex-direction: row; align-items: center; justify-content: space-between; border-bottom-width: 1px; border-bottom-color: var(--royal-border, #896b3d); }
+.tan-navigation__back { min-width: 48px; min-height: 48px; color: var(--royal-gold, #c69a45); font-size: 24px; }
+.tan-navigation__title { flex-grow: 1; color: var(--royal-ivory, #f5ecd0); font-size: 18px; -unity-font-style: bold; -unity-text-align: middle-center; }
+.tan-navigation__utility { min-width: 48px; min-height: 48px; align-items: center; justify-content: center; }
+
+.tn-high-contrast .tan-button, .tn-high-contrast .tan-panel, .tn-high-contrast .tan-player-card { border-top-color: white; border-right-color: white; border-bottom-color: white; border-left-color: white; }
+.tn-large-text .tan-button, .tn-large-text .tan-player-card, .tn-large-text .tan-clue-card, .tn-large-text .tan-chat-message { min-height: 60px; }
+.tn-large-text .tan-button__label { font-size: 22px; }
+.tn-large-text .tan-player-card__name, .tn-large-text .tan-clue-card__content, .tn-large-text .tan-chat-message__content { font-size: 18px; }
+.tn-large-text .tan-timer__time { font-size: 38px; }
+.tn-high-contrast .tan-button__label, .tn-high-contrast .tan-player-card__name, .tn-high-contrast .tan-chat-message__content { -unity-font-style: bold; }
+.tn-high-contrast .tan-badge, .tn-high-contrast .tan-timer { border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: white; border-right-color: white; border-bottom-color: white; border-left-color: white; }
+.tn-reduced-motion .tan-button { transition-duration: 0ms; }
+
+/* PV5: card materials, interaction, explicit state symbols and restrained illustrated motion. */
+.tan-role-card, .tan-clue-card, .tan-player-card {
+    transition-property: translate, scale, opacity, border-left-color, border-right-color, border-top-color, border-bottom-color;
+    transition-duration: 0.14s;
+    transition-timing-function: ease-out;
+}
+.tan-role-card { box-shadow: 0 5px 12px rgba(0,0,0,0.36); }
+.tan-role-card__frame { background-color: rgba(245,236,208,0.025); }
+.tan-role-card__artwork { border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-color: rgba(216,196,155,0.36); border-right-color: rgba(216,196,155,0.36); border-bottom-color: rgba(216,196,155,0.36); border-left-color: rgba(216,196,155,0.36); }
+.tan-role-card:hover, .tan-clue-card:hover, .tan-player-card:hover { translate: 0 -4px; scale: 1.01 1.01; box-shadow: 0 9px 18px rgba(0,0,0,0.4); }
+.tan-role-card:active, .tan-clue-card:active, .tan-player-card:active, .tan-button:active { scale: 0.98 0.98; }
+.tan-role-card--selected, .tan-clue-card.pv5-card-selected, .tan-player-card.pv5-card-selected { translate: 0 -4px; scale: 1.015 1.015; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: #f0bd63; border-right-color: #f0bd63; border-bottom-color: #f0bd63; border-left-color: #f0bd63; box-shadow: 0 8px 18px rgba(0,0,0,0.44); }
+.pv5-selection-marker { display: none; position: absolute; right: 8px; top: 8px; padding: 4px 8px; color: #211813; background-color: #f0bd63; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-size: 11px; -unity-font-style: bold; }
+.tan-role-card--selected .pv5-selection-marker, .pv5-card-selected > .pv5-selection-marker { display: flex; }
+.pv5-card-hover { translate: 0 -4px; scale: 1.01 1.01; box-shadow: 0 9px 18px rgba(0,0,0,0.4); }
+.pv5-card-pressed { scale: 0.98 0.98; }
+.pv5-card-disabled { opacity: 0.58; }
+.pv5-card-revealing { translate: 0 -12px; box-shadow: 0 16px 28px rgba(0,0,0,0.52); }
+.pv5-card-midpoint { scale: 0.06 1; }
+.pv5-card-flip-light { opacity: 0.72; }
+.pv5-card-revealed { box-shadow: 0 10px 22px rgba(198,154,69,0.24); }
+.tan-player-card.pv5-card-selected .pv5-selection-marker { display: flex; }
+.tan-player-card--accused { border-top-color: #f0bd63; border-right-color: #f0bd63; border-bottom-color: #f0bd63; border-left-color: #f0bd63; }
+.tan-player-card--accused .tan-player-card__state { -unity-font-style: bold; }
+.tan-player-card--winner { translate: 0 -3px; }
+.pv5-character-idle { opacity: 1; }
+.pv5-character-listening .tan-avatar__portrait { border-bottom-width: 3px; }
+.pv5-character-speaking .tan-avatar__portrait { translate: 0 -2px; }
+.pv5-character-selected .tan-avatar__portrait { border-bottom-width: 4px; }
+.pv5-character-accused .tan-avatar__portrait { border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; }
+.pv5-character-revealed .tan-avatar__portrait { border-top-color: #f0bd63; border-right-color: #f0bd63; border-bottom-color: #f0bd63; border-left-color: #f0bd63; }
+.pv5-character-results .tan-avatar__portrait { border-bottom-width: 3px; }
+.pv5-toast { opacity: 0; translate: 0 8px; transition-property: opacity, translate; transition-duration: 0.18s; }
+.pv5-toast-enter { opacity: 1; translate: 0 0; }
+.pv5-toast-exit { opacity: 0; translate: 0 -6px; }
+.pv5-feedback-success { border-top-color: #f0bd63; border-right-color: #f0bd63; border-bottom-color: #f0bd63; border-left-color: #f0bd63; scale: 1.03 1.03; }
+.pv5-feedback-error { border-top-color: #f5ecd0; border-right-color: #f5ecd0; border-bottom-color: #f5ecd0; border-left-color: #f5ecd0; }
+.pv5-modal-enter { opacity: 1; scale: 1 1; }
+.pv5-modal-exit { opacity: 0; scale: 0.97 0.97; }
+.pv5-navigation-active { border-bottom-width: 3px; border-bottom-color: #f0bd63; -unity-font-style: bold; }
+.pv5-depth-0 { z-index: 0; }
+.pv5-depth-1 { z-index: 1; }
+.pv5-depth-2 { z-index: 2; }
+.pv5-depth-3 { z-index: 3; }
+.pv5-depth-4 { z-index: 4; }
+.pv5-depth-5 { z-index: 5; }
+.pv5-necklace-reveal { rotate: 3deg; transition-property: rotate, opacity; transition-duration: 0.3s; }
+.pv5-focus-target { border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-color: #f0bd63; border-right-color: #f0bd63; border-bottom-color: #f0bd63; border-left-color: #f0bd63; }
+
+/* PV5 responsive rules; touch surfaces remain at least 48px. */
+.tn-layout-tablet .tan-button, .tn-layout-mobile-landscape .tan-button { min-height: 52px; }
+.tn-layout-tablet .tan-icon-button, .tn-layout-mobile-landscape .tan-icon-button { min-width: 48px; min-height: 48px; }
+.tn-layout-tablet .pv2-player-grid { flex-wrap: wrap; }
+.tn-layout-mobile-landscape .pv2-frame { padding-left: 12px; padding-right: 12px; }
+.tn-layout-mobile-landscape .pv2-player-grid { flex-direction: row; flex-wrap: wrap; }
+.tn-layout-mobile-landscape .pv2-game-rail > .tan-player-card { min-width: 132px; min-height: 60px; margin-top: 3px; margin-bottom: 3px; }
+.tn-layout-mobile-landscape .tan-chat-message__content { font-size: 12px; }
+
+.tn-reduced-motion .tan-role-card, .tn-reduced-motion .tan-clue-card, .tn-reduced-motion .tan-player-card,
+.tn-reduced-motion .pv5-card-hover, .tn-reduced-motion .pv5-card-revealing, .tn-reduced-motion .pv5-character-speaking,
+.tn-reduced-motion .pv5-feedback-success, .tn-reduced-motion .pv5-necklace-reveal {
+    transition-duration: 0ms; translate: 0 0; scale: 1 1; rotate: 0deg;
+}
+.tn-reduced-motion .pv5-toast { transition-duration: 0ms; }
+.tn-high-contrast .pv5-selection-marker, .tn-high-contrast .tan-role-card--selected, .tn-high-contrast .pv5-focus-target { border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-top-color: white; border-right-color: white; border-bottom-color: white; border-left-color: white; }
+.tn-large-text .pv5-selection-marker { font-size: 14px; padding: 6px 10px; }

@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="BaseScreen.uss" />
+    <ui:VisualElement name="screen-root" class="tn-screen">
+        <ui:VisualElement name="background" class="tn-screen-background" />
+        <ui:VisualElement name="content" class="tn-screen-content" />
+        <ui:VisualElement name="overlay" class="tn-screen-overlay" />
+    </ui:VisualElement>
+</ui:UXML>

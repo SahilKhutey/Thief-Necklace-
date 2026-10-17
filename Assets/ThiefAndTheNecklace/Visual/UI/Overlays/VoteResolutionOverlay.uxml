@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <Style src="../Foundations/Resources/DesignTokens.uss" />
+  <Style src="../USS/TANComponents.uss" />
+  <Style src="../Screens/PV2Screens.uss" />
+  <ui:VisualElement name="overlay-root" class="tn-modal pv2-overlay pv5-vote-resolution">
+    <ui:VisualElement class="tn-modal__backdrop" />
+    <ui:VisualElement class="tn-modal__frame">
+      <ui:Label text="VOTE RESOLUTION" class="tn-modal__header" />
+      <ui:VisualElement class="tn-modal__body">
+        <ui:Label name="vote-resolution-title" text="VOTES COUNTED" class="tn-headline" />
+        <ui:Label name="vote-resolution-message" text="The result is being prepared." class="tn-body" />
+      </ui:VisualElement>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

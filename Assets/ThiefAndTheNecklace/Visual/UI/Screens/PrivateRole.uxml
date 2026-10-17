@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <Style src="../Foundations/Resources/DesignTokens.uss"/><Style src="../USS/TANComponents.uss"/><Style src="PV2Screens.uss"/>
+  <ui:VisualElement name="screen-root" class="tn-screen pv2-screen">
+    <ui:VisualElement class="tn-screen-background pv2-background"/>
+    <ui:VisualElement class="pv2-frame">
+      <ui:VisualElement class="pv2-topbar"><ui:Button name="screen-back" text="‹" class="tan-icon-button"/><ui:Label name="screen-title" text="YOUR ROLE" class="pv2-top-title"/><ui:Label name="screen-status" text="PRIVATE" class="tan-badge tan-badge--warning"/></ui:VisualElement>
+      <ui:VisualElement class="pv2-content"><ui:Label name="screen-subtitle" text="PRIVATE INFORMATION" class="tn-headline"/>
+        <ui:VisualElement name="primary-content" class="pv2-primary-content">
+          <ui:VisualElement name="role-card" class="tan-role-card tan-role-card--back">
+            <ui:VisualElement class="tan-role-card__frame"><ui:Label name="role-name" text="YOUR ROLE" class="tan-role-card__name"/><ui:VisualElement name="artwork" class="tan-role-card__artwork"/><ui:Label name="role-value" text="" class="tan-role-card__value"/></ui:VisualElement>
+            <ui:VisualElement class="tan-role-card__back-emblem"><ui:Label text="♛" class="tan-role-card__back-crest"/><ui:Label text="THIEF &amp; THE NECKLACE" class="tn-caption"/></ui:VisualElement>
+          </ui:VisualElement>
+          <ui:Button name="show-role" text="REVEAL YOUR ROLE" class="tan-button tan-button--primary"/>
+          <ui:VisualElement class="pv2-private-detail"><ui:Label text="YOUR SITUATION" class="tn-headline"/><ui:Label name="private-situation" text="" class="tn-body"/></ui:VisualElement>
+          <ui:VisualElement class="pv2-private-detail"><ui:Label text="YOUR CLUES" class="tn-headline"/><ui:VisualElement name="private-clues"/></ui:VisualElement>
+          <ui:VisualElement class="pv2-private-detail"><ui:Label text="OBJECTIVE" class="tn-headline"/><ui:Label name="private-objective" text="" class="tn-body"/></ui:VisualElement>
+          <ui:Button name="continue-role" text="CONTINUE" class="tan-button tan-button--primary" disabled="true"/>
+        </ui:VisualElement>
+      </ui:VisualElement>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

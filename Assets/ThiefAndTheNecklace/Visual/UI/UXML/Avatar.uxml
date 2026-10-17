@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="avatar" class="tan-avatar">
+        <ui:VisualElement name="portrait" class="tan-avatar__portrait" />
+        <ui:Label name="avatar-name" class="tan-avatar__name" />
+        <ui:Label name="avatar-status" class="tan-avatar__status" />
+    </ui:VisualElement>
+</ui:UXML>

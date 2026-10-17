@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <Style src="../Foundations/Resources/DesignTokens.uss"/><Style src="../USS/TANComponents.uss"/><Style src="PV2Screens.uss"/>
+  <ui:VisualElement name="screen-root" class="tn-screen pv2-screen">
+    <ui:VisualElement class="tn-screen-background pv2-background"/>
+    <ui:VisualElement class="pv2-frame">
+      <ui:VisualElement class="pv2-topbar"><ui:Button name="go-main-menu" text="‹" class="tan-icon-button"/><ui:Label name="screen-title" text="HOW TO PLAY" class="pv2-top-title"/><ui:Label name="screen-status" text="" class="tan-badge tan-badge--info"/></ui:VisualElement>
+      <ui:VisualElement class="pv2-content"><ui:Label name="screen-subtitle" text="DISCUSS • DEDUCE • ACCUSE" class="tn-headline"/>
+        <ui:VisualElement name="page-container" class="pv2-page-container">
+          <ui:VisualElement class="pv2-tutorial-page"><ui:Label text="1  RECEIVE YOUR PRIVATE ROLE" class="pv2-screen-heading"/><ui:Label text="Study your role, situation, and personal clues. Keep private information to yourself." class="tn-body"/></ui:VisualElement>
+          <ui:VisualElement class="pv2-tutorial-page"><ui:Label text="2  DISCUSS THE MYSTERY" class="pv2-screen-heading"/><ui:Label text="Share what you choose in chat and compare accounts with the other players." class="tn-body"/></ui:VisualElement>
+          <ui:VisualElement class="pv2-tutorial-page"><ui:Label text="3  CAST A VOTE" class="pv2-screen-heading"/><ui:Label text="Choose another player. The local player cannot vote for themself." class="tn-body"/></ui:VisualElement>
+          <ui:VisualElement class="pv2-tutorial-page"><ui:Label text="4  REVEAL &amp; SCORE" class="pv2-screen-heading"/><ui:Label text="See the authorized reveal, then review the round and match results." class="tn-body"/></ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="pv2-vote-actions"><ui:Button name="page-prev" text="BACK" class="tan-button tan-button--secondary"/><ui:Label name="page-indicator" text="1 / 4" class="tn-body"/><ui:Button name="page-next" text="NEXT" class="tan-button tan-button--primary"/></ui:VisualElement>
+      </ui:VisualElement>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

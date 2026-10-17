@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="panel" class="tan-panel">
+        <ui:VisualElement name="decoration" class="tan-panel__decoration" />
+        <ui:Label name="header" class="tan-panel__header" />
+        <ui:VisualElement name="content" class="tan-panel__content" />
+        <ui:VisualElement name="footer" class="tan-panel__footer" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:Button name="root" class="tan-button">
+        <ui:VisualElement name="highlight" class="tan-button__highlight" />
+        <ui:VisualElement name="content" class="tan-button__content">
+            <ui:VisualElement name="icon" class="tan-button__icon" />
+            <ui:Label name="label" class="tan-button__label" />
+        </ui:VisualElement>
+        <ui:VisualElement name="loading" class="tan-button__loading">
+            <ui:Label text="…" />
+        </ui:VisualElement>
+    </ui:Button>
+</ui:UXML>

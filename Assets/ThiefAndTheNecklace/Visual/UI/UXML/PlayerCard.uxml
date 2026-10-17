@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="player-card" class="tan-player-card">
+        <ui:Label name="selection-marker" text="✓ SELECTED" class="pv5-selection-marker" />
+        <ui:VisualElement name="avatar" class="tan-avatar">
+            <ui:VisualElement name="portrait" class="tan-avatar__portrait" />
+        </ui:VisualElement>
+        <ui:VisualElement name="identity" class="tan-player-card__identity">
+            <ui:Label name="name" class="tan-player-card__name" />
+            <ui:Label name="status" class="tan-player-card__status" />
+        </ui:VisualElement>
+        <ui:Label name="score" class="tan-player-card__score" />
+        <ui:Label name="state" class="tan-player-card__state" />
+    </ui:VisualElement>
+</ui:UXML>

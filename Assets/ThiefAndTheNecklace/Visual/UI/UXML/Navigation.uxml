@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="navigation" class="tan-navigation">
+        <ui:Button name="back" text="‹" class="tan-navigation__back" />
+        <ui:Label name="title" class="tan-navigation__title" />
+        <ui:VisualElement name="utility" class="tan-navigation__utility" />
+    </ui:VisualElement>
+</ui:UXML>

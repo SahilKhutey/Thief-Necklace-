@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="role-card" class="tan-role-card">
+        <ui:Label name="selection-marker" text="✓ SELECTED" class="pv5-selection-marker" />
+        <ui:VisualElement name="back-emblem" class="tan-role-card__back-emblem">
+            <ui:Label text="♛" class="tan-role-card__back-crest" />
+            <ui:Label text="◈" class="tan-role-card__back-necklace" />
+        </ui:VisualElement>
+        <ui:VisualElement name="frame" class="tan-role-card__frame">
+            <ui:VisualElement name="crest" class="tan-role-card__crest" />
+            <ui:Label name="role-name" class="tan-role-card__name" />
+            <ui:VisualElement name="artwork" class="tan-role-card__artwork" />
+            <ui:Label name="role-value" class="tan-role-card__value" />
+            <ui:VisualElement name="footer" class="tan-role-card__footer" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

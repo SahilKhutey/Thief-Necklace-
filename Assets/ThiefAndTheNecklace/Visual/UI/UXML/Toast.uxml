@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="toast" class="tan-toast">
+        <ui:Label name="icon" text="•" class="tan-toast__icon" />
+        <ui:Label name="message" class="tan-toast__message" />
+    </ui:VisualElement>
+</ui:UXML>

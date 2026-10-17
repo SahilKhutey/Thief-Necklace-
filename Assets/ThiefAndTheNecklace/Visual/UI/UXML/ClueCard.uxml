@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="../Foundations/Resources/DesignTokens.uss" />
+    <Style src="../USS/TANComponents.uss" />
+    <ui:VisualElement name="clue-card" class="tan-clue-card">
+        <ui:Label name="selection-marker" text="✓ SELECTED" class="pv5-selection-marker" />
+        <ui:Label name="title" text="CLUE" class="tan-clue-card__title" />
+        <ui:VisualElement name="icon" class="tan-clue-card__icon" />
+        <ui:Label name="content" class="tan-clue-card__content" />
+        <ui:Label name="source" class="tan-clue-card__source" />
+        <ui:VisualElement name="footer" class="tan-clue-card__footer" />
+    </ui:VisualElement>
+</ui:UXML>
