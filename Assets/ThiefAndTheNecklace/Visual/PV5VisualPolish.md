@@ -36,4 +36,4 @@ The runtime setup and styles are ready for an editor pass. These items require a
 - Inspect all authored sprites/materials, imports, texture memory, draw calls, GC allocations, and load spikes with real assets enabled.
 - Verify VFX pool prewarm and cap against the actual assigned effect prefabs, then check pooled toast expiry/reuse in play mode.
 
-There is no generated production art in this pass: the session did not expose `OPENAI_API_KEY`, so the user's previously approved CLI image-generation path was unavailable. This does not block the runtime fallback behavior, but it does mean the “no placeholder UI” art acceptance check remains dependent on importing the PV3 assets.
+The production UI now draws a resolution-independent palace vignette and necklace reveal motif with UI Toolkit Painter2D. The image-generation API key was not available, and the built-in generator was not exposed in this session, so the required illustrated character/card/prop/location PNGs remain unpopulated and the PV3 art acceptance check is still blocked.
