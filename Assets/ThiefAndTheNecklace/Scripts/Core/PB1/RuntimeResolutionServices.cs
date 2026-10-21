@@ -71,16 +71,8 @@ namespace ThiefAndTheNecklace.PB1
 
         public static int GetRoleValue(RoleType role)
         {
-            switch (role)
-            {
-                case RoleType.King: return 8;
-                case RoleType.Queen: return 7;
-                case RoleType.Minister: return 6;
-                case RoleType.Soldier: return 5;
-                case RoleType.Guard: return 5;
-                case RoleType.Servant: return 4;
-                default: return 0;
-            }
+            var definition = ThiefAndTheNecklace.RoleCatalog.Find(role.ToString().ToLowerInvariant());
+            return definition == null ? 0 : definition.PointValue;
         }
     }
 
@@ -91,9 +83,9 @@ namespace ThiefAndTheNecklace.PB1
         private readonly RuntimeScoreService scores;
         public RoundResolver(RuntimeVoteService voteService, RuntimeVoteResolver resolver, RuntimeScoreService scoreService)
         { votes=voteService ?? throw new ArgumentNullException(nameof(voteService)); voteResolver=resolver ?? throw new ArgumentNullException(nameof(resolver)); scores=scoreService ?? throw new ArgumentNullException(nameof(scoreService)); }
-        public VoteResolution ResolveVotes(GameRuntimeState state, bool finalVote)
+        public VoteResolution ResolveVotes(GameRuntimeState state, bool finalVote, bool allowPartial = false)
         {
-            if (!votes.EveryoneVoted(state)) throw new InvalidOperationException("Not every connected player has voted.");
+            if (!allowPartial && !votes.EveryoneVoted(state)) throw new InvalidOperationException("Not every connected player has voted.");
             var result=voteResolver.Resolve(state, finalVote);
             state.Match.CurrentRoundState.Resolution=result;
             state.Match.CurrentRoundState.AccusedPlayerId=voteResolver.GetWinner(state);
