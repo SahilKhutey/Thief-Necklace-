@@ -24,14 +24,14 @@ namespace ThiefAndTheNecklace.Visual.UI
         private string _selectedId;
         private Button _submit;
         public event Action<string> VoteSubmitted;
-        public void BindProgress(int submitted, int eligible, bool runoff)
+        public void BindProgress(int submitted, int eligible, bool runoff, bool isOpen = true)
         {
             var progress = _root?.Q<Label>("vote-progress");
             if (progress != null) progress.text = Mathf.Clamp(submitted, 0, eligible) + " / " + eligible + " VOTES RECEIVED";
             var status = _root?.Q<Label>("vote-status");
             if (status != null)
             {
-                status.text = runoff ? "TIE · REVOTE" : "CAST YOUR VOTE";
+                status.text = !isOpen ? "VOTING CLOSED" : runoff ? "TIE · REVOTE" : "CAST YOUR VOTE";
                 status.EnableInClassList("pv4-vote-tie", runoff);
             }
         }

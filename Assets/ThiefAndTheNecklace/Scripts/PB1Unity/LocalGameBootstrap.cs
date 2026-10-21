@@ -12,6 +12,10 @@ namespace ThiefAndTheNecklace.PB1.Unity
         [SerializeField] private RevealController revealController;
         [SerializeField, Min(1)] private int totalRounds = 5;
         [SerializeField] private int matchSeed = 10001;
+        [SerializeField, Min(30)] private int discussionDurationSeconds = 180;
+        [SerializeField, Min(1)] private int votingDurationSeconds = 60;
+        [SerializeField] private bool allowEarlyVote = true;
+        [SerializeField, Min(1)] private int earlyVoteConfirmationsRequired = 4;
         [SerializeField] private List<string> playerNames = new List<string> { "Player 1", "Player 2", "Player 3", "Player 4" };
 
         public GameController Controller { get; private set; }
@@ -25,8 +29,9 @@ namespace ThiefAndTheNecklace.PB1.Unity
 
         private void Update()
         {
-            if (gameTimer == null && Controller != null && Controller.Phase == RoundPhase.Discussion)
-                Controller.AdvanceTimer(Time.deltaTime);
+            if (Controller == null) return;
+            if (Controller.Phase == RoundPhase.Voting) Controller.AdvanceTimer(Time.deltaTime);
+            else if (gameTimer == null && Controller.Phase == RoundPhase.Discussion) Controller.AdvanceTimer(Time.deltaTime);
         }
 
         private void OnDestroy()
@@ -44,7 +49,7 @@ namespace ThiefAndTheNecklace.PB1.Unity
         {
             if (gameTimer != null)
             {
-                if (phase == RoundPhase.Discussion) gameTimer.StartTimer(180f);
+                if (phase == RoundPhase.Discussion) gameTimer.StartTimer(Mathf.Max(30, discussionDurationSeconds));
                 else gameTimer.StopTimer();
             }
             if (phase != RoundPhase.Reveal) return;
@@ -86,7 +91,13 @@ namespace ThiefAndTheNecklace.PB1.Unity
         {
             if (Controller != null) throw new System.InvalidOperationException("This bootstrap already owns a match controller.");
             var runtimeScenario = ResolveScenario();
-            Controller = new GameController(runtimeScenario, totalRounds, matchSeed);
+            Controller = new GameController(runtimeScenario, totalRounds, matchSeed, new DiscussionRateConfig
+            {
+                DurationSeconds=Mathf.Max(30, discussionDurationSeconds),
+                VotingDurationSeconds=Mathf.Max(1, votingDurationSeconds),
+                AllowEarlyVote=allowEarlyVote,
+                EarlyVoteConfirmationsRequired=allowEarlyVote ? Mathf.Max(1, earlyVoteConfirmationsRequired) : 0
+            });
             Controller.PhaseChanged += OnPhaseChanged;
             if (gameTimer != null) gameTimer.Completed += OnDiscussionTimerCompleted;
             if (revealController != null)

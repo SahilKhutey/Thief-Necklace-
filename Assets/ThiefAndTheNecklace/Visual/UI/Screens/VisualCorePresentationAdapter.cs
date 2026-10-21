@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ThiefAndTheNecklace.PB1;
 using ThiefAndTheNecklace.PB1.Unity;
@@ -27,6 +28,7 @@ namespace ThiefAndTheNecklace.Visual.UI
         private bool _resolutionQueued;
         private bool _revealWasPresented;
         private bool _scenarioIntroShown;
+        private int _lastVoteSeconds = -1;
         private readonly PresentationStateMachine _presentation = new PresentationStateMachine();
 
         private void Awake()
@@ -38,24 +40,36 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private void Update()
         {
-            if (_controller != null) return;
+            if (_controller != null)
+            {
+                if (_controller.Phase == RoundPhase.Voting)
+                {
+                    var seconds=_controller.RemainingVotingSeconds;
+                    if (seconds != _lastVoteSeconds) { screens?.BindTimer(seconds); _lastVoteSeconds=seconds; }
+                }
+                return;
+            }
             if (bootstrap == null) bootstrap = FindObjectOfType<LocalGameBootstrap>();
             if (screens == null) screens = FindObjectOfType<ScreenManager>();
             if (bootstrap == null || bootstrap.Controller == null || screens == null) return;
             _controller = bootstrap.Controller;
             _controller.PhaseChanged += OnPhaseChanged;
             _controller.StateChanged += OnCoreStateChanged;
+            _controller.DiscussionEventPublished += OnDiscussionEventPublished;
             _gameTimer = bootstrap.Timer;
             if (_gameTimer != null) _gameTimer.Tick += OnTimerTicked;
             else _controller.Discussion.Ticked += OnTimerTicked;
             if (screens != null)
             {
                 screens.VoteSubmitted += OnVoteSubmitted;
+                screens.ChatMessageSubmitted += OnChatMessageSubmitted;
+                screens.CallVoteRequested += OnCallVoteRequested;
                 screens.RoundResultsContinueRequested += OnRoundResultsContinue;
                 screens.PrivateRoleContinueRequested += OnPrivateRoleContinue;
                 screens.ScenarioIntroContinueRequested += OnScenarioIntroContinue;
             }
             Route(_controller.Phase);
+            BindDiscussionMessages();
         }
 
         private void OnDestroy()
@@ -64,12 +78,15 @@ namespace ThiefAndTheNecklace.Visual.UI
             {
                 _controller.PhaseChanged -= OnPhaseChanged;
                 _controller.StateChanged -= OnCoreStateChanged;
+                _controller.DiscussionEventPublished -= OnDiscussionEventPublished;
                 if (_gameTimer != null) _gameTimer.Tick -= OnTimerTicked;
                 else _controller.Discussion.Ticked -= OnTimerTicked;
             }
             if (screens != null)
             {
                 screens.VoteSubmitted -= OnVoteSubmitted;
+                screens.ChatMessageSubmitted -= OnChatMessageSubmitted;
+                screens.CallVoteRequested -= OnCallVoteRequested;
                 screens.RoundResultsContinueRequested -= OnRoundResultsContinue;
                 screens.PrivateRoleContinueRequested -= OnPrivateRoleContinue;
                 screens.ScenarioIntroContinueRequested -= OnScenarioIntroContinue;
@@ -236,9 +253,51 @@ namespace ThiefAndTheNecklace.Visual.UI
             });
         }
 
+        private void OnChatMessageSubmitted(string text)
+        {
+            if (_controller == null || _controller.Phase != RoundPhase.Discussion) return;
+            try { _controller.SendChatMessage(localPlayerId, text); }
+            catch (Exception exception)
+            {
+                screens?.ShowToast(exception.Message);
+                VisualPresentationBus.Shared.Raise(VisualEventType.PresentationError, "chat message rejected");
+            }
+        }
+
+        private void OnDiscussionEventPublished(DiscussionEvent item) => BindDiscussionMessages();
+
+        private void OnCallVoteRequested()
+        {
+            if (_controller == null) return;
+            if (_controller.Phase == RoundPhase.Discussion)
+            {
+                try
+                {
+                    if (!_controller.RequestEarlyVote(localPlayerId)) screens?.ShowToast("Waiting for the room to agree before voting.");
+                }
+                catch (Exception exception) { screens?.ShowToast(exception.Message); }
+            }
+            else if (_controller.Phase == RoundPhase.Voting) screens?.ShowOverlay(VisualOverlayId.Voting);
+        }
+
+        private void BindDiscussionMessages()
+        {
+            if (_controller == null || screens == null) return;
+            var players=_controller.GetPublicPlayers().ToDictionary(player => player.PlayerId.ToString(), player => player.DisplayName);
+            var messages=_controller.GetDiscussionSnapshot().Messages.Select(message => new ChatMessageViewModel
+            {
+                Sender=players.TryGetValue(message.PlayerId.ToString(), out var name) ? name : "Player " + message.PlayerId,
+                Message=message.Text,
+                Timestamp=DateTimeOffset.FromUnixTimeMilliseconds(message.Timestamp).ToLocalTime().ToString("HH:mm:ss", CultureInfo.InvariantCulture),
+                IsLocalPlayer=message.PlayerId == localPlayerId
+            }).ToList();
+            screens.BindChatMessages(messages);
+        }
+
         private void BindVoteTargets()
         {
             var players = _controller.GetPublicPlayers();
+            var eligibleTargets = new HashSet<int>(_controller.GetEligibleVoteTargets(localPlayerId));
             var tied = _controller.IsRunoff && _controller.LastOutcome != null
                 ? new HashSet<int>(_controller.LastOutcome.Counts.Where(p => p.Value == _controller.LastOutcome.Counts.Values.Max()).Select(p => p.Key))
                 : null;
@@ -246,22 +305,24 @@ namespace ThiefAndTheNecklace.Visual.UI
             {
                 PlayerId = p.PlayerId.ToString(), DisplayName = p.DisplayName,
                 IsLocalPlayer = p.PlayerId == localPlayerId, IsConnected = p.Connected,
-                IsEligible = tied == null || tied.Contains(p.PlayerId)
+                IsEligible = eligibleTargets.Contains(p.PlayerId) && (tied == null || tied.Contains(p.PlayerId))
             }).ToList());
         }
 
         private void BindVoteProgress()
         {
             var progress = _controller.GetVoteProgress();
-            screens.BindVoteProgress(progress.Submitted, progress.Eligible, _controller.IsRunoff);
+            screens.BindVoteProgress(progress.Submitted, progress.Eligible, _controller.IsRunoff, _controller.VotingStatus == VoteStatus.Open);
         }
 
         private void OnCoreStateChanged()
         {
             if (_controller == null || _controller.Phase != RoundPhase.Voting) return;
             var progress = _controller.GetVoteProgress();
-            screens.BindVoteProgress(progress.Submitted, progress.Eligible, _controller.IsRunoff);
-            if (progress.Eligible > 0 && progress.Submitted >= progress.Eligible && !_resolutionQueued)
+            var isOpen=_controller.VotingStatus == VoteStatus.Open;
+            screens.BindVoteProgress(progress.Submitted, progress.Eligible, _controller.IsRunoff, isOpen);
+            if (!isOpen) { BindVoteTargets(); screens.HideOverlay(VisualOverlayId.Voting); }
+            if (!isOpen && !_resolutionQueued)
                 StartCoroutine(ResolveVotesAfterVoteLock());
         }
 
@@ -274,12 +335,16 @@ namespace ThiefAndTheNecklace.Visual.UI
                 if (_controller != null && _controller.Phase == RoundPhase.Voting)
                 {
                     var progress = _controller.GetVoteProgress();
-                    if (progress.Eligible > 0 && progress.Submitted >= progress.Eligible)
+                    if (_controller.VotingStatus != VoteStatus.Open)
                     {
                         var result = _controller.ResolveVotes();
-                        var counts = _controller.LastOutcome != null ? _controller.LastOutcome.Counts : null;
-                        var highest = counts != null && counts.Count > 0 ? counts.Values.Max() : 0;
-                        var tiedAgain = _controller.IsRunoff && counts != null && counts.Count(pair => pair.Value == highest) > 1;
+                        var resolution = _controller.LastVoteResolutionResult;
+                        if (resolution == null || resolution.Outcome == ResolutionOutcome.Pending)
+                        {
+                            screens.ShowVoteResolution("NO VALID VOTES", "No target is selected. The round remains pending.");
+                            StartCoroutine(HideVoteResolutionAfter(1.25f));
+                            return;
+                        }
                         if (result == VoteResolution.RevoteRequired)
                         {
                             VisualEventBus.Raise(VisualEventType.VoteTie);
@@ -287,7 +352,7 @@ namespace ThiefAndTheNecklace.Visual.UI
                             screens.ShowVoteResolution("TIE VOTE", "The top targets are tied. A revote is starting.");
                             StartCoroutine(HideVoteResolutionAfter(1.05f));
                         }
-                        else if (tiedAgain)
+                        else if (resolution.Outcome == ResolutionOutcome.ThiefEscaped)
                         {
                             VisualEventBus.Raise(VisualEventType.VoteTie);
                             PlayApprovedEffect(VisualEffectId.VoteTie);

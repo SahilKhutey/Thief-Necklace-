@@ -427,12 +427,13 @@ namespace ThiefAndTheNecklace.Visual.UI
         public event Action ScenarioIntroContinueRequested;
         public event Action RoundResultsContinueRequested;
         public event Action<string> ChatMessageSubmitted;
+        public event Action CallVoteRequested;
         public event Action<ScreenId, string> RoomRequested;
         public event Action<bool> LobbyReadyChanged;
         public event Action LobbyStartRequested;
         public void BindVoteTargets(IReadOnlyList<VoteTargetViewModel> publicPlayers, string previouslySelectedId = null)
             => _voting?.Bind(publicPlayers, previouslySelectedId);
-        public void BindVoteProgress(int submitted, int eligible, bool runoff) => _voting?.BindProgress(submitted, eligible, runoff);
+        public void BindVoteProgress(int submitted, int eligible, bool runoff, bool isOpen = true) => _voting?.BindProgress(submitted, eligible, runoff, isOpen);
         /// <summary>Call only after the core runtime accepts the submitted vote.</summary>
         public void ConfirmVoteLocked()
         {
@@ -489,7 +490,11 @@ namespace ThiefAndTheNecklace.Visual.UI
                     button.clicked += () => VisualEventBus.Raise(VisualEventType.ButtonPressed);
                     var target = button.name.Substring(3).Replace('-', ' ');
                     if (string.Equals(target, "chat", StringComparison.OrdinalIgnoreCase)) button.clicked += () => ShowOverlay(VisualOverlayId.Chat);
-                    else if (string.Equals(target, "vote", StringComparison.OrdinalIgnoreCase)) button.clicked += () => ShowOverlay(VisualOverlayId.Voting);
+                    else if (string.Equals(target, "vote", StringComparison.OrdinalIgnoreCase)) button.clicked += () =>
+                    {
+                        if (CallVoteRequested != null) CallVoteRequested.Invoke();
+                        else ShowOverlay(VisualOverlayId.Voting);
+                    };
                     else if (string.Equals(target, "settings", StringComparison.OrdinalIgnoreCase)) button.clicked += () => { if (Current == ScreenId.Game) ShowOverlay(VisualOverlayId.Settings); else NavigateByName(target); };
                     else if (button.name == "go-private-role" && screenId == ScreenId.ScenarioIntro) button.clicked += () => ScenarioIntroContinueRequested?.Invoke();
                     else if (button.name == "go-scenario-intro" && screenId == ScreenId.RoundResults) button.clicked += () => RoundResultsContinueRequested?.Invoke();
