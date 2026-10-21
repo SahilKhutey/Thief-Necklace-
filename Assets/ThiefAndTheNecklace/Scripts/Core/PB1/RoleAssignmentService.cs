@@ -6,8 +6,10 @@ namespace ThiefAndTheNecklace.PB1
 {
     public sealed class RoleAssignmentService
     {
-        private static readonly RoleType[] InnocentRoles =
-            { RoleType.King, RoleType.Minister, RoleType.Soldier, RoleType.Servant, RoleType.Queen, RoleType.Guard };
+        private static readonly RoleType[] InnocentRoles = ThiefAndTheNecklace.RoleCatalog.AllRoles
+            .Where(role => role != null && !role.IsThief)
+            .Select(role => (RoleType)Enum.Parse(typeof(RoleType), role.Id, true))
+            .ToArray();
 
         public void AssignRoles(IList<PlayerRuntimeData> players, int seed)
         {

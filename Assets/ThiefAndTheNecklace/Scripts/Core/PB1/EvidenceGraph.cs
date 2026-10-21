@@ -9,14 +9,15 @@ namespace ThiefAndTheNecklace.PB1
         private readonly Dictionary<string, EvidenceDefinition> evidence = new Dictionary<string, EvidenceDefinition>(StringComparer.Ordinal);
         private readonly Dictionary<string, FactDefinition> facts = new Dictionary<string, FactDefinition>(StringComparer.Ordinal);
         private readonly Dictionary<FactKey, FactDefinition> factsByKey = new Dictionary<FactKey, FactDefinition>();
-        public void AddFact(FactDefinition fact) { if (fact == null || string.IsNullOrWhiteSpace(fact.FactId)) throw new ArgumentException("A fact with an ID is required.", nameof(fact)); if (facts.ContainsKey(fact.FactId)) throw new InvalidOperationException("Duplicate fact ID: " + fact.FactId); var key = new FactKey(fact.SubjectId, fact.Predicate, fact.ObjectId); if (factsByKey.ContainsKey(key)) throw new InvalidOperationException("Duplicate logical fact: " + key); var copy = new FactDefinition { FactId=fact.FactId, SubjectId=fact.SubjectId, Predicate=fact.Predicate, ObjectId=fact.ObjectId, Truth=fact.Truth }; facts.Add(copy.FactId, copy); factsByKey.Add(key, copy); }
+        public void AddFact(FactDefinition fact) { if (fact == null || string.IsNullOrWhiteSpace(fact.FactId)) throw new ArgumentException("A fact with an ID is required.", nameof(fact)); if (facts.ContainsKey(fact.FactId)) throw new InvalidOperationException("Duplicate fact ID: " + fact.FactId); var key = new FactKey(fact.SubjectId, fact.Predicate, fact.ObjectId); if (factsByKey.ContainsKey(key)) throw new InvalidOperationException("Duplicate logical fact: " + key); var copy = new FactDefinition { FactId=fact.FactId, SubjectId=fact.SubjectId, Predicate=fact.Predicate, ObjectId=fact.ObjectId, Truth=fact.Truth, Critical=fact.Critical }; facts.Add(copy.FactId, copy); factsByKey.Add(key, copy); }
         public bool TryGetFact(FactKey key, out FactDefinition fact) => factsByKey.TryGetValue(key, out fact);
         public void AddEvidence(EvidenceDefinition item) { if (item == null || string.IsNullOrWhiteSpace(item.EvidenceId)) throw new ArgumentException("Evidence with an ID is required.", nameof(item)); if (evidence.ContainsKey(item.EvidenceId)) throw new InvalidOperationException("Duplicate evidence ID: " + item.EvidenceId); evidence.Add(item.EvidenceId, Copy(item)); }
         public bool TryGetEvidence(string evidenceId, out EvidenceDefinition item) { if (!evidence.TryGetValue(evidenceId, out var found)) { item = null; return false; } item = Copy(found); return true; }
         public IReadOnlyList<EvidenceDefinition> GetEvidenceSupporting(string factId) => evidence.Values.Where(e => e.SupportsFactIds != null && e.SupportsFactIds.Contains(factId)).Select(Copy).ToList().AsReadOnly();
         public IReadOnlyList<EvidenceDefinition> GetEvidenceContradicting(string factId) => evidence.Values.Where(e => e.ContradictsFactIds != null && e.ContradictsFactIds.Contains(factId)).Select(Copy).ToList().AsReadOnly();
-        public bool HasIndependentSupport(string factId, int minimum = 2) => minimum >= 0 && GetEvidenceSupporting(factId).Count(e => e.Independent) >= minimum;
-        private static EvidenceDefinition Copy(EvidenceDefinition e) => new EvidenceDefinition { EvidenceId=e.EvidenceId, Description=e.Description, SupportsFactIds=new List<string>(e.SupportsFactIds ?? new List<string>()), ContradictsFactIds=new List<string>(e.ContradictsFactIds ?? new List<string>()), RequiredEventIds=new List<string>(e.RequiredEventIds ?? new List<string>()), Independent=e.Independent, Critical=e.Critical, IsAmbiguous=e.IsAmbiguous, IsFalseLead=e.IsFalseLead, OwnerPlayerId=e.OwnerPlayerId };
+        public bool HasIndependentSupport(string factId, int minimum = 2) => minimum >= 0 && GetEvidenceSupporting(factId).Select(e => !string.IsNullOrWhiteSpace(e.CausalPathId) ? "path:" + e.CausalPathId : !string.IsNullOrWhiteSpace(e.SourceId) ? "source:" + e.SourceId : string.Empty).Where(id => !string.IsNullOrEmpty(id)).Distinct(StringComparer.Ordinal).Count() >= minimum;
+        public int CountIndependentPaths(string factId, ScenarioTruthModel scenario) => new EvidenceGraphValidator().CountIndependentPaths(scenario, factId);
+        private static EvidenceDefinition Copy(EvidenceDefinition e) => new EvidenceDefinition { EvidenceId=e.EvidenceId, Description=e.Description, SupportsFactIds=new List<string>(e.SupportsFactIds ?? new List<string>()), ContradictsFactIds=new List<string>(e.ContradictsFactIds ?? new List<string>()), RequiredEventIds=new List<string>(e.RequiredEventIds ?? new List<string>()), Independent=e.Independent, Critical=e.Critical, IsAmbiguous=e.IsAmbiguous, IsFalseLead=e.IsFalseLead, OwnerPlayerId=e.OwnerPlayerId, ClueTargetPlayerId=e.ClueTargetPlayerId, SourceEventId=e.SourceEventId, CausalPathId=e.CausalPathId, SourceId=e.SourceId, EvidenceType=e.EvidenceType, ClueType=e.ClueType, PublicAfterRevealOnly=e.PublicAfterRevealOnly, Strength=e.Strength, EliminatesPlayerIds=new List<string>(e.EliminatesPlayerIds ?? new List<string>()) };
     }
 
     public sealed class KnowledgeService
@@ -58,7 +59,7 @@ namespace ThiefAndTheNecklace.PB1
         public bool HasOpportunity(OpportunityWindow window, float eventTime, string eventLocation)
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
-            return eventTime >= window.StartTime && eventTime <= window.EndTime && string.Equals(window.LocationId, eventLocation, StringComparison.Ordinal) && window.HasAccess && window.PhysicallyPossible;
+            return eventTime >= window.StartTime && eventTime <= window.EndTime && string.Equals(window.LocationId, eventLocation, StringComparison.Ordinal) && window.HasAccess && window.PhysicallyPossible && window.HadTime && window.HasCapability;
         }
     }
 
@@ -77,12 +78,17 @@ namespace ThiefAndTheNecklace.PB1
             var claim = new PlayerClaim { ClaimId = Guid.NewGuid().ToString("N"), PlayerId = playerId, FactId = factId ?? string.Empty, Statement = statement.Trim(), GameTime = gameTime };
             claims.Add(claim); ClaimAdded?.Invoke(Clone(claim)); return Clone(claim);
         }
+        public PlayerClaim RegisterClaim(PlayerClaim claim)
+        {
+            if (claim == null) throw new ArgumentNullException(nameof(claim));
+            claims.Add(Clone(claim)); ClaimAdded?.Invoke(Clone(claim)); return Clone(claim);
+        }
         public bool RetractClaim(string claimId)
         {
             var claim = claims.Find(x => string.Equals(x.ClaimId, claimId, StringComparison.Ordinal));
             if (claim == null || claim.Retracted) return false;
             claim.Retracted = true; ClaimWasRetracted?.Invoke(Clone(claim)); return true;
         }
-        private static PlayerClaim Clone(PlayerClaim p) => new PlayerClaim { ClaimId=p.ClaimId, PlayerId=p.PlayerId, FactId=p.FactId, Statement=p.Statement, GameTime=p.GameTime, Retracted=p.Retracted };
+        private static PlayerClaim Clone(PlayerClaim p) => new PlayerClaim { ClaimId=p.ClaimId, PlayerId=p.PlayerId, FactId=p.FactId, Statement=p.Statement, GameTime=p.GameTime, Retracted=p.Retracted, Timestamp=p.Timestamp, Sequence=p.Sequence, Type=p.Type, Interpretation=p.Interpretation };
     }
 }

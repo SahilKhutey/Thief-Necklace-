@@ -10,5 +10,7 @@ namespace ThiefAndTheNecklace.PB1
         public string DisplayName { get; internal set; }
         public int MatchScore { get; internal set; }
         public bool Connected { get; internal set; }
+        public bool Ready { get; internal set; }
+        public int SeatIndex { get; internal set; }
     }
 }

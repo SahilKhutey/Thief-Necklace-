@@ -24,13 +24,15 @@ namespace ThiefAndTheNecklace
         public string DisplayName;
         public int PointValue;
         public string Description;
+        public bool IsThief;
 
-        public RoleDefinition(string id, string displayName, int pointValue, string description)
+        public RoleDefinition(string id, string displayName, int pointValue, string description, bool isThief = false)
         {
             Id = id;
             DisplayName = displayName;
             PointValue = pointValue;
             Description = description;
+            IsThief = isThief;
         }
     }
 
@@ -108,7 +110,8 @@ namespace ThiefAndTheNecklace
             new RoleDefinition("minister", "Minister", 6, "A trusted court official."),
             new RoleDefinition("soldier", "Soldier", 5, "A disciplined palace defender."),
             new RoleDefinition("servant", "Servant", 4, "An observant member of the household."),
-            new RoleDefinition("guard", "Guard", 5, "A palace security officer.")
+            new RoleDefinition("guard", "Guard", 5, "A palace security officer."),
+            new RoleDefinition("thief", "Thief", 0, "The hidden Necklace bearer. This is an objective marker layered over a court role.", true)
         };
 
         public static readonly RoleDefinition[] FourPlayerRoles = { AllRoles[0], AllRoles[2], AllRoles[3], AllRoles[4] };

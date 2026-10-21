@@ -29,6 +29,7 @@ namespace ThiefAndTheNecklace.PB1
         public ThiefObjective? ThiefObjective;
         public bool Connected = true;
         public bool Ready;
+        public bool PrivateInformationAcknowledged;
         public int MatchScore;
         public int RoundScore;
         public PrivateKnowledgeState Knowledge = new PrivateKnowledgeState();
@@ -43,7 +44,19 @@ namespace ThiefAndTheNecklace.PB1
         public List<string> UnknownFactIds = new List<string>();
         public List<string> FalseFactIds = new List<string>();
         public List<string> EvidenceIds = new List<string>();
+        public List<string> ObservedEventIds = new List<string>();
+        public List<string> KnownLocationIds = new List<string>();
+        public List<string> KnownPlayerIds = new List<string>();
+        public List<PlayerBelief> Beliefs = new List<PlayerBelief>();
         public string Objective = string.Empty;
+    }
+
+    [Serializable]
+    public sealed class PlayerBelief
+    {
+        public string FactId = string.Empty;
+        public string SourceClaimId = string.Empty;
+        public float Confidence;
     }
 
     [Serializable]
@@ -61,6 +74,7 @@ namespace ThiefAndTheNecklace.PB1
         public string ScenarioId = string.Empty;
         public RoundPhase Phase = RoundPhase.Waiting;
         public int VoteRound;
+        public int TieCount;
         public VoteResolution Resolution = VoteResolution.Undecided;
         public bool ThiefEscaped;
         public int? AccusedPlayerId;
@@ -74,14 +88,18 @@ namespace ThiefAndTheNecklace.PB1
     {
         private string scenarioId = string.Empty;
         private int generationSeed;
+        private int generationAttempt;
         private bool validated;
         private ScenarioTruthModel truth = new ScenarioTruthModel();
+        private SolvabilityResult solvability;
         public string ScenarioId { get { return scenarioId; } internal set { if (validated) throw new InvalidOperationException("Validated scenario state is immutable."); scenarioId = value; } }
         public int GenerationSeed { get { return generationSeed; } internal set { if (validated) throw new InvalidOperationException("Validated scenario state is immutable."); generationSeed = value; } }
+        public int GenerationAttempt { get { return generationAttempt; } internal set { if (validated) throw new InvalidOperationException("Validated scenario state is immutable."); generationAttempt = value; } }
         public bool Validated { get { return validated; } }
+        public SolvabilityResult Solvability { get { return solvability; } }
         public ScenarioTruthModel Truth { get { return truth.DeepCopy(); } }
         internal void SetTruth(ScenarioTruthModel model) { if (validated) throw new InvalidOperationException("Validated scenario state is immutable."); truth = (model ?? throw new ArgumentNullException(nameof(model))).DeepCopy(); }
-        internal void MarkValidated() { if (validated) throw new InvalidOperationException("Scenario is already validated."); validated=true; }
+        internal void MarkValidated(SolvabilityResult result) { if (validated) throw new InvalidOperationException("Scenario is already validated."); solvability=result; validated=true; }
     }
 
     [Serializable]
