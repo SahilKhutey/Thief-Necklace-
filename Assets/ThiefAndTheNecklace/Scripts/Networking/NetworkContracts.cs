@@ -19,7 +19,20 @@ namespace ThiefAndTheNecklace.Networking
         VoteClosed,
         InvalidPhase,
         HostDisconnected,
-        ServiceUnavailable
+        ServiceUnavailable,
+        InvalidConfiguration,
+        InvalidIdentity,
+        PlayerNotFound,
+        AlreadyInRoom,
+        NotRoomMember,
+        NotRoomAuthority,
+        NotReady,
+        MatchNotReady,
+        InvalidState,
+        InitializationFailed,
+        MatchNotCompleted,
+        RosterLocked,
+        InvalidRematch
     }
 
     public enum ConnectionState
@@ -55,6 +68,39 @@ namespace ThiefAndTheNecklace.Networking
         Task<NetworkOperationResult<string>> CreateSessionAsync(int maxPlayers);
         Task<NetworkOperationResult<bool>> JoinSessionAsync(string joinCode);
         Task LeaveSessionAsync();
+    }
+
+    /// <summary>Provider adapter contract. All calls must be authenticated and validated by the room authority.</summary>
+    public interface IRoomTransport
+    {
+        event Action<LobbySnapshot> LobbySnapshotReceived;
+        event Action<MatchSessionSnapshot> MatchSnapshotReceived;
+        event Action<string, bool> PlayerConnectionChanged;
+        event Action<SessionLifecycleEvent> LifecycleEventReceived;
+        event Action<string, SessionDiscussionEvent> DiscussionEventReceived;
+        event Action<string, SessionVoteEvent> VoteEventReceived;
+        event Action<string, SessionVoteResolutionEvent> VoteResolutionEventReceived;
+
+        Task<NetworkOperationResult<LobbySnapshot>> CreateRoomAsync(SessionPlayerIdentity creator, RoomConfiguration configuration);
+        Task<NetworkOperationResult<LobbySnapshot>> JoinRoomAsync(string roomId, SessionPlayerIdentity player);
+        Task<NetworkOperationResult<LobbySnapshot>> SetReadyStateAsync(string authenticatedPlayerId, bool ready);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> StartMatchAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> RequestRematchAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<LobbySnapshot>> ReturnToLobbyAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<bool>> LeaveRoomAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<SessionPrivatePlayerSnapshot>> GetPrivatePlayerInformationAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> AcknowledgePrivateInformationAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> BeginDiscussionAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.DiscussionSnapshot>> GetDiscussionSnapshotAsync(string authenticatedPlayerId, long afterSequence = 0, int pageSize = 100);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.DiscussionMessage>> SendDiscussionMessageAsync(string authenticatedPlayerId, string text);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.PlayerQuestion>> SubmitDiscussionQuestionAsync(string authenticatedPlayerId, string targetPlayerId, string text);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.DiscussionResponse>> RespondToDiscussionQuestionAsync(string authenticatedPlayerId, string questionId, string text);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.PlayerClaim>> SubmitDiscussionClaimAsync(string authenticatedPlayerId, string factId, string statement, float gameTime, ThiefAndTheNecklace.PB1.ClaimType type);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.ClaimChallenge>> ChallengeDiscussionClaimAsync(string authenticatedPlayerId, string claimId, string text);
+        Task<NetworkOperationResult<bool>> RequestDiscussionEarlyVoteAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.VoteSubmissionResult>> SubmitVoteAsync(string authenticatedPlayerId, string targetPlayerId, int voteSequence);
+        Task<NetworkOperationResult<SessionVotingSnapshot>> GetVotingSnapshotAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<IReadOnlyList<SessionRevealedPlayerSnapshot>>> GetRevealedPlayerInformationAsync(string authenticatedPlayerId);
     }
 
     public interface INetworkClock

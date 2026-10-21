@@ -9,16 +9,31 @@ namespace ThiefAndTheNecklace.Networking
         public const int MinimumPlayers = 4;
         public const int MaximumPlayers = 6;
         private readonly Dictionary<string, PublicPlayerState> _players = new Dictionary<string, PublicPlayerState>();
+        private readonly List<string> _seatOrder = new List<string>();
+        private readonly int _minimumPlayers;
+        private readonly int _maximumPlayers;
         private bool _matchStarted;
 
-        public IReadOnlyCollection<PublicPlayerState> Players => _players.Values.ToArray();
+        public IReadOnlyCollection<PublicPlayerState> Players => _seatOrder.Where(_players.ContainsKey).Select(id => _players[id]).ToArray();
+        public IReadOnlyList<string> OrderedPlayerIds => _seatOrder.ToArray();
         public int ConnectedCount => _players.Values.Count(p => p.Connected);
         public bool MatchStarted => _matchStarted;
+        public int MinimumPlayers => _minimumPlayers;
+        public int MaximumPlayers => _maximumPlayers;
+
+        public NetworkPlayerRegistry() : this(MinimumPlayers, MaximumPlayers) { }
+
+        public NetworkPlayerRegistry(int minimumPlayers, int maximumPlayers)
+        {
+            if (minimumPlayers < MinimumPlayers || maximumPlayers > MaximumPlayers || minimumPlayers > maximumPlayers)
+                throw new ArgumentOutOfRangeException(nameof(minimumPlayers), "The supported player range is 4–6 until gameplay and result contracts are expanded.");
+            _minimumPlayers = minimumPlayers;
+            _maximumPlayers = maximumPlayers;
+        }
 
         public NetworkGameError Add(string playerId, string displayName)
         {
             if (_matchStarted) return NetworkGameError.MatchStarted;
-            if (string.IsNullOrWhiteSpace(playerId) || string.IsNullOrWhiteSpace(displayName)) return NetworkGameError.NotConnected;
             if (string.IsNullOrWhiteSpace(playerId) || string.IsNullOrWhiteSpace(displayName)) return NetworkGameError.NotConnected;
             PublicPlayerState existing;
             if (_players.TryGetValue(playerId, out existing))
@@ -27,8 +42,9 @@ namespace ThiefAndTheNecklace.Networking
                 existing.Ready = false;
                 return NetworkGameError.None;
             }
-            if (_players.Count >= MaximumPlayers) return NetworkGameError.SessionFull;
+            if (_players.Count >= _maximumPlayers) return NetworkGameError.SessionFull;
             _players.Add(playerId, new PublicPlayerState(playerId, displayName));
+            _seatOrder.Add(playerId);
             return NetworkGameError.None;
         }
 
@@ -52,11 +68,19 @@ namespace ThiefAndTheNecklace.Networking
         public bool RemoveFromLobby(string playerId)
         {
             if (_matchStarted) return false;
-            return _players.Remove(playerId);
+            return RemoveMember(playerId);
         }
 
-        public bool CanStart => !_matchStarted && ConnectedCount >= MinimumPlayers && ConnectedCount <= MaximumPlayers
-                                && _players.Values.Where(p => p.Connected).All(p => p.Ready);
+        public bool RemoveMember(string playerId)
+        {
+            if (!_players.Remove(playerId)) return false;
+            _seatOrder.Remove(playerId);
+            return true;
+        }
+
+        public bool CanStart => !_matchStarted && CanStartWithCurrentRoster;
+        public bool CanStartWithCurrentRoster => ConnectedCount >= _minimumPlayers && ConnectedCount <= _maximumPlayers
+                                                  && _players.Values.Where(p => p.Connected).All(p => p.Ready);
 
         public bool TryLockRoster()
         {
