@@ -67,3 +67,21 @@ GW4 adds the authority-owned, turnless discussion history for chat, questions, r
 GW5 adds sequenced authoritative voting, target eligibility, one-vote locking, hidden ballot targets, deadline and all-voted closure, and immutable `FinalizedVoteCollection` handoff. The network session API exposes only caller-specific targets and aggregate progress; an authoritative host scheduler polls vote deadlines. Provider transport still requires authenticated adapters and broadcast/reconnect integration.
 
 GW6 validates and deterministically counts only finalized GW5 collections, supports partial timeout ballots, caches resolution by round and vote sequence, and applies configurable tie/revote/second-tie escape policies. Privacy-safe result events expose counts and selected targets without revealing roles. Empty ballots remain pending without selecting a target; an explicit recovery policy is still needed before automatic round progression can be enabled for that case.
+
+GW7 adds an authoritative reveal service after a committed target or escape result. It validates the actual Thief against role assignment, applies role/Necklace disclosure policies, publishes ordered reveal events, supports optional presentation acknowledgment, and provides an authenticated reconnect snapshot. GW8 remains the separate scoring phase.
+
+## GW8 — scoring and score transactions
+
+Scoring runs after the completed GW7 reveal and consumes its authoritative outcome together with the finalized vote collection for the same round. `ScoringService` generates validated, idempotent score transactions, applies round and cumulative totals atomically, and exposes immutable score snapshots and ordered scoring events. Default rewards are configurable and follow the production GW8 workflow. Session reconnect projections translate internal seat IDs to authenticated player IDs.
+
+## GW9 — round results and match progression
+
+`RoundCompletionService` persists immutable round results after reveal and scoring are finalized, enforces cumulative-score continuity, and exposes round history. Results have a minimum display duration and a maximum deadline. Connected participants submit an idempotent continue command scoped to both match and round IDs; the round advances once all connected players are ready after the minimum duration, or when the authority polls the maximum deadline. Local play polls from the Unity bootstrap; online hosts must schedule `PollResultsTimeout` as part of their authoritative heartbeat. Reconnect snapshots include the active round result, readiness, deadline, and result history.
+
+Progression creates a fresh round identity and retains the cumulative ledger. The final round freezes scores and produces stable shared ranks for ties; player identity ordering is presentation-only. Completed match snapshots and histories remain in memory for rematch/reconnect. Rematch requires participant requests and starts a distinct match identity and seed. Room and core player-count limits currently remain 4–6; disconnect policies are configurable at the core results boundary. The network session is an in-memory prototype, so histories and result idempotency do not survive process restart, and the transport interface remains unconnected.
+
+## GW10 — multiplayer networking contract
+
+`Scripts/Networking/NetworkReplicationRuntime.cs` provides provider-neutral authenticated command routing, command replay protection, protocol version checks, visibility-aware event envelopes, monotonic sequencing, public snapshots, phase timestamps, client snapshot/event synchronization, resync requests, reconnect states, and authority checkpoint interfaces. Session room entry validates the client protocol version. Authority-only gameplay remains in the match core and session runtime; public snapshots omit hidden roles, clues, objectives, and truth.
+
+No Photon or Unity Netcode adapter is connected. Durable authority transfer requires provider-backed storage. The gameplay/scenario/result contracts still support four to six players; GW10's requested four-to-eight target needs new role and scenario content as well as coordinated validation and UI updates.
