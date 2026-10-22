@@ -32,6 +32,9 @@ namespace ThiefAndTheNecklace.Visual.UI
             {
                 Set(screen, "revealed-role", reveal.RevealedRole);
                 Set(screen, "outcome", reveal.Outcome);
+                SetIfProvided(screen, "reveal-target", reveal.SelectedTarget);
+                SetIfProvided(screen, "reveal-thief", reveal.ThiefPlayer);
+                SetIfProvided(screen, "necklace-owner", reveal.NecklaceRevealed ? reveal.NecklaceOwner : string.Empty);
                 Set(screen, "score-delta", reveal.ScoreDelta >= 0 ? "+" + reveal.ScoreDelta : reveal.ScoreDelta.ToString());
                 var artwork = screen.Q<VisualElement>("revealed-artwork");
                 if (artwork != null && reveal.RevealedArtwork != null) artwork.style.backgroundImage = new StyleBackground(reveal.RevealedArtwork);

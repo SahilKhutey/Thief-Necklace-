@@ -27,7 +27,8 @@ namespace ThiefAndTheNecklace.PB1
                 case RoundPhase.Voting: return next == RoundPhase.VoteResolution;
                 case RoundPhase.VoteResolution: return next == RoundPhase.Reveal || next == RoundPhase.Voting;
                 case RoundPhase.Reveal: return next == RoundPhase.Scoring;
-                case RoundPhase.Scoring: return next == RoundPhase.RoundEnd;
+                case RoundPhase.Scoring: return next == RoundPhase.Results;
+                case RoundPhase.Results: return next == RoundPhase.RoundEnd;
                 case RoundPhase.RoundEnd: return next == RoundPhase.NextRound || next == RoundPhase.MatchEnd;
                 case RoundPhase.NextRound: return next == RoundPhase.Starting;
                 default: return false;

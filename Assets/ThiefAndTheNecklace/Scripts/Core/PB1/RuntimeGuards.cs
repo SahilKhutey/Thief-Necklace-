@@ -31,6 +31,9 @@ namespace ThiefAndTheNecklace.PB1
             if (!Enum.IsDefined(typeof(RoundPhase), round.Phase) || !Enum.IsDefined(typeof(VoteResolution), round.Resolution)) throw new InvalidOperationException("Unknown round phase or resolution.");
             if (round.Completed && round.Phase != RoundPhase.RoundEnd && round.Phase != RoundPhase.MatchEnd) throw new InvalidOperationException("Completed round is outside an end phase.");
             if (round.Completed && (!round.ScoringResolved || !state.Scores.CommittedRounds.Contains(round.RoundNumber))) throw new InvalidOperationException("A completed round must have exactly one committed score result.");
+            if (round.Phase == RoundPhase.Results && (round.Status != RoundStatus.Results || !round.ScoringResolved || !state.Scores.CommittedRounds.Contains(round.RoundNumber))) throw new InvalidOperationException("Results require finalized scoring and a persisted score commit.");
+            if (round.Status == RoundStatus.Complete && !round.Completed) throw new InvalidOperationException("A complete round must be marked completed.");
+            if (round.Status == RoundStatus.Aborted && match.Status != MatchStatus.Aborted) throw new InvalidOperationException("An aborted round requires an aborted match.");
             if (match.Status == MatchStatus.Completed && (round.Phase != RoundPhase.MatchEnd || match.CurrentRound != match.TotalRounds)) throw new InvalidOperationException("Completed match is not at the final round end.");
             if (match.Status == MatchStatus.InProgress && round.Phase == RoundPhase.MatchEnd) throw new InvalidOperationException("Active match cannot be in MatchEnd.");
             if (state.Scores.CommittedRounds.Distinct().Count() != state.Scores.CommittedRounds.Count) throw new InvalidOperationException("A round score was committed more than once.");
@@ -61,7 +64,8 @@ namespace ThiefAndTheNecklace.PB1
                 case RoundPhase.Voting: return next == RoundPhase.VoteResolution;
                 case RoundPhase.VoteResolution: return next == RoundPhase.Reveal || next == RoundPhase.Voting;
                 case RoundPhase.Reveal: return next == RoundPhase.Scoring;
-                case RoundPhase.Scoring: return next == RoundPhase.RoundEnd;
+                case RoundPhase.Scoring: return next == RoundPhase.Results;
+                case RoundPhase.Results: return next == RoundPhase.RoundEnd;
                 case RoundPhase.RoundEnd: return next == RoundPhase.NextRound || next == RoundPhase.MatchEnd;
                 case RoundPhase.NextRound: return next == RoundPhase.Starting;
                 default: return false;

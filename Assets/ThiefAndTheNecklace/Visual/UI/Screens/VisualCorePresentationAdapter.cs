@@ -186,6 +186,8 @@ namespace ThiefAndTheNecklace.Visual.UI
                             StartCoroutine(ShowScoreResultsAfterFallbackReveal());
                             break;
                         }
+                        break;
+                    case RoundPhase.Results:
                         _presentation.Complete(PresentationState.ShowingResults);
                         VisualEventBus.Raise(VisualEventType.RevealCompleted);
                         screens.SetCinematicInputLocked(true);
@@ -216,7 +218,7 @@ namespace ThiefAndTheNecklace.Visual.UI
         private IEnumerator ShowScoreResultsAfterFallbackReveal()
         {
             yield return new WaitForSecondsRealtime(0.9f);
-            if (_controller != null && _controller.Phase == RoundPhase.Scoring) Route(RoundPhase.Scoring);
+            if (_controller != null && _controller.Phase == RoundPhase.Results) Route(RoundPhase.Results);
         }
 
         private void BindPrivateRole()
@@ -410,34 +412,46 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private void BindAuthorizedReveal()
         {
-            var outcome = _controller.LastOutcome;
-            string roleName = "NO ACCUSATION";
+            var reveal = _controller.LastRevealResult;
+            var roles = _controller.GetRevealedPlayers();
+            var selectedId = reveal != null ? reveal.SelectedTargetId : null;
+            var publicThiefId = reveal != null ? reveal.PublicThiefPlayerId : null;
+            var displayId = selectedId.HasValue && roles.ContainsKey(selectedId.Value) ? selectedId : publicThiefId;
+            var displayRole = displayId.HasValue && roles.TryGetValue(displayId.Value, out var foundRole) ? foundRole : null;
+            var displayName = displayId.HasValue ? _controller.GetPublicPlayers().FirstOrDefault(player => player.PlayerId == displayId.Value)?.DisplayName : null;
+            var thiefName = publicThiefId.HasValue ? _controller.GetPublicPlayers().FirstOrDefault(player => player.PlayerId == publicThiefId.Value)?.DisplayName : null;
+            var outcomeText = reveal == null ? "REVEAL UNAVAILABLE"
+                : reveal.Outcome == RevealOutcome.ThiefCaught ? "THE THIEF WAS CAUGHT · THE NECKLACE IS RECOVERED"
+                : reveal.Outcome == RevealOutcome.WrongPlayerSelected ? (publicThiefId.HasValue ? "WRONG PLAYER SELECTED · THE THIEF IS REVEALED" : "WRONG PLAYER SELECTED")
+                : "THE THIEF ESCAPED · THE NECKLACE REMAINS MISSING";
             var viewModel = new AuthorizedRevealViewModel
             {
-                Title = "THE REVEAL", Outcome = outcome != null && outcome.Result == VoteResolution.ThiefEscaped
-                    ? "THE THIEF ESCAPED" : "THE NECKLACE IS RECOVERED"
+                Title = "THE REVEAL", Outcome = outcomeText,
+                SelectedTarget = selectedId.HasValue ? "SELECTED: " + (displayName ?? ("PLAYER " + selectedId.Value)) : "SELECTED: NONE · ESCAPE",
+                ThiefPlayer = publicThiefId.HasValue ? "THIEF: " + (thiefName ?? ("PLAYER " + publicThiefId.Value)) : string.Empty,
+                NecklaceRevealed = reveal != null && reveal.Necklace.IsRevealed,
+                NecklaceOwner = reveal != null && reveal.Necklace.OwnerPlayerId.HasValue
+                    ? (_controller.GetPublicPlayers().FirstOrDefault(player => player.PlayerId == reveal.Necklace.OwnerPlayerId.Value)?.DisplayName ?? ("PLAYER " + reveal.Necklace.OwnerPlayerId.Value)) : string.Empty
             };
-            if (outcome != null && outcome.AccusedPlayerId.HasValue)
+            if (displayRole != null)
             {
-                var roles = _controller.GetRevealedPlayers();
-                var accused = roles[outcome.AccusedPlayerId.Value];
-                roleName = accused.IsThief ? "THIEF" : accused.Role.ToString().ToUpperInvariant();
+                var roleName = displayRole.IsThief ? "THIEF" : displayRole.Role.ToString().ToUpperInvariant();
                 viewModel.RevealedRole = roleName;
-                viewModel.IsThiefObjectiveReveal = accused.IsThief;
+                viewModel.IsThiefObjectiveReveal = displayRole.IsThief;
                 if (roleVisuals != null)
                 {
-                    var art = accused.IsThief ? roleVisuals.thiefObjectiveRevealData : roleVisuals.Find(accused.Role.ToString());
-                    viewModel.RevealedArtwork = accused.IsThief
+                    var art = displayRole.IsThief ? roleVisuals.thiefObjectiveRevealData : roleVisuals.Find(displayRole.Role.ToString());
+                    viewModel.RevealedArtwork = displayRole.IsThief
                         ? (art != null ? art.cardArt : roleVisuals.thiefObjectiveRevealArt)
                         : (art != null ? art.cardArt : null);
                 }
             }
-            else viewModel.RevealedRole = roleName;
+            else viewModel.RevealedRole = selectedId.HasValue ? "ROLE NOT REVEALED BY POLICY" : "NO ACCUSATION";
             screens.BindScreen(ScreenId.Reveal, viewModel);
-            if (vfxPool != null && outcome != null)
-                vfxPool.Play(outcome.Result == VoteResolution.ThiefCaught ? VisualEffectId.NecklaceSpark : VisualEffectId.Escape, vfxPool.transform.position);
-            if (outcome != null)
-                VisualEventBus.Raise(outcome.Result == VoteResolution.ThiefCaught ? VisualEventType.Victory : VisualEventType.Escape);
+            if (vfxPool != null && reveal != null)
+                vfxPool.Play(reveal.Outcome == RevealOutcome.ThiefCaught ? VisualEffectId.NecklaceSpark : VisualEffectId.Escape, vfxPool.transform.position);
+            if (reveal != null)
+                VisualEventBus.Raise(reveal.Outcome == RevealOutcome.ThiefCaught ? VisualEventType.Victory : VisualEventType.Escape);
         }
 
         private void BindRoundResults()
@@ -446,9 +460,10 @@ namespace ThiefAndTheNecklace.Visual.UI
             var viewModel = new ResultsScreenViewModel
             {
                 Title = "ROUND " + _controller.CurrentRound + " RESULTS",
-                Summary = _controller.LastOutcome != null && _controller.LastOutcome.Result == VoteResolution.ThiefCaught
-                    ? "The Thief was discovered. The Necklace is safe."
-                    : "The Necklace remains missing. The Thief escaped.",
+                Summary = _controller.LastRevealResult == null ? "Reveal information is unavailable."
+                    : _controller.LastRevealResult.Outcome == RevealOutcome.ThiefCaught ? "The Thief was discovered. The Necklace is recovered."
+                    : _controller.LastRevealResult.Outcome == RevealOutcome.WrongPlayerSelected ? "The wrong player was selected. The Thief escaped with the Necklace."
+                    : "The Thief escaped after the tie. The Necklace remains missing.",
                 Rankings = rows.Select(p => new PlayerCardViewModel
                 {
                     PlayerId = p.PlayerId.ToString(), DisplayName = p.DisplayName,
@@ -475,7 +490,7 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private void OnRoundResultsContinue()
         {
-            if (_controller == null || _controller.Phase != RoundPhase.Scoring) return;
+            if (_controller == null || _controller.Phase != RoundPhase.Results) return;
             try { _controller.FinishRound(); }
             catch (Exception exception) { _presentation.Recover("finish round"); Debug.LogException(exception, this); }
         }

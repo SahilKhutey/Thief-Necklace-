@@ -10,11 +10,16 @@ namespace ThiefAndTheNecklace.PB1
         public string MatchId = string.Empty;
         public int Seed;
         public int Round;
+        public string RoundId = string.Empty;
+        public RoundStatus RoundStatus;
         public RoundPhase Phase;
         public string ScenarioId = string.Empty;
         public int VoteRound;
         public string Resolution = string.Empty;
         public bool Completed;
+        public RevealSnapshot Reveal;
+        public CompletedRoundResult RoundResult;
+        public MatchResult MatchResult;
         public List<PlayerScoreSnapshot> Scores = new List<PlayerScoreSnapshot>();
     }
 
@@ -34,6 +39,7 @@ namespace ThiefAndTheNecklace.PB1
             return new GameSnapshot
             {
                 MatchId=state.Match.MatchId, Seed=state.Match.Seed, Round=state.Match.CurrentRound,
+                RoundId=state.Match.CurrentRoundState.RoundId, RoundStatus=state.Match.CurrentRoundState.Status,
                 Phase=state.Match.CurrentRoundState.Phase, ScenarioId=state.Match.CurrentRoundState.ScenarioId,
                 VoteRound=state.Match.CurrentRoundState.VoteRound, Resolution=state.Match.CurrentRoundState.Resolution.ToString(),
                 Completed=state.Match.CurrentRoundState.Completed,

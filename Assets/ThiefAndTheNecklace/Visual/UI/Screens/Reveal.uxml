@@ -10,6 +10,9 @@
           <ui:VisualElement class="tan-role-card tan-role-card--revealing">
             <ui:VisualElement class="tan-role-card__frame"><ui:Label name="revealed-role" text="ROLE REVEALED" class="tan-role-card__name"/><ui:VisualElement name="revealed-artwork" class="tan-role-card__artwork"/><ui:Label text="Authorized reveal art" class="tn-caption"/></ui:VisualElement>
           </ui:VisualElement>
+          <ui:Label name="reveal-target" text="SELECTED: —" class="tn-caption"/>
+          <ui:Label name="reveal-thief" text="THIEF: —" class="tn-caption"/>
+          <ui:Label name="necklace-owner" text="NECKLACE: —" class="tn-caption"/>
           <ui:Label name="outcome" text="ROUND OUTCOME" class="pv2-screen-heading"/>
           <ui:VisualElement class="tan-panel"><ui:Label text="SCORE CHANGE" class="tn-headline"/><ui:Label name="score-delta" text="+0" class="tan-score__delta"/></ui:VisualElement>
           <ui:Button name="go-round-results" text="CONTINUE TO RESULTS" class="tan-button tan-button--primary"/>

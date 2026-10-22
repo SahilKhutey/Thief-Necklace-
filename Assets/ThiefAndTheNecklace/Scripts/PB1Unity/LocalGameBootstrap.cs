@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +17,15 @@ namespace ThiefAndTheNecklace.PB1.Unity
         [SerializeField, Min(1)] private int votingDurationSeconds = 60;
         [SerializeField] private bool allowEarlyVote = true;
         [SerializeField, Min(1)] private int earlyVoteConfirmationsRequired = 4;
+        [SerializeField] private RoleRevealPolicy roleRevealPolicy = RoleRevealPolicy.AllPlayers;
+        [SerializeField] private bool revealNecklace = true;
+        [SerializeField] private bool revealActualThiefOnWrongVote = true;
+        [SerializeField] private bool revealActualThiefOnEscape = true;
+        [SerializeField] private bool requireRevealPresentationAck;
+        [SerializeField, Min(1f)] private float revealPresentationFallbackSeconds = 4f;
+        [SerializeField, Min(0f)] private float resultsMinimumDisplaySeconds = 4f;
+        [SerializeField, Min(1f)] private float resultsMaximumDisplaySeconds = 30f;
+        [SerializeField] private bool allowEarlyResultsContinue = true;
         [SerializeField] private List<string> playerNames = new List<string> { "Player 1", "Player 2", "Player 3", "Player 4" };
 
         public GameController Controller { get; private set; }
@@ -30,7 +40,7 @@ namespace ThiefAndTheNecklace.PB1.Unity
         private void Update()
         {
             if (Controller == null) return;
-            if (Controller.Phase == RoundPhase.Voting) Controller.AdvanceTimer(Time.deltaTime);
+            if (Controller.Phase == RoundPhase.Voting || Controller.Phase == RoundPhase.Results) Controller.AdvanceTimer(Time.deltaTime);
             else if (gameTimer == null && Controller.Phase == RoundPhase.Discussion) Controller.AdvanceTimer(Time.deltaTime);
         }
 
@@ -53,15 +63,46 @@ namespace ThiefAndTheNecklace.PB1.Unity
                 else gameTimer.StopTimer();
             }
             if (phase != RoundPhase.Reveal) return;
+            StartCoroutine(RevealPresentationFallback(Controller.CurrentRound));
             if (revealController == null)
             {
                 Controller.NotifyRoleRevealed();
-                Controller.CalculateScores();
+                StartCoroutine(CompleteFallbackReveal());
                 return;
             }
+            var reveal=Controller.LastRevealResult;
+            if (reveal == null) { revealController.BeginOutcomeOnly(); return; }
             var roles = Controller.GetRevealedPlayers();
-            var accusedId = Controller.LastOutcome.AccusedPlayerId ?? roles.First(pair => pair.Value.IsThief).Key;
-            revealController.BeginReveal(accusedId, roles[accusedId].Role, Controller.LastOutcome.Result == VoteResolution.ThiefCaught);
+            if (reveal.Reason == RevealReason.ThiefEscaped)
+            {
+                var thiefId=reveal.PublicThiefPlayerId ?? reveal.ActualThiefPlayerId;
+                if (roles.TryGetValue(thiefId, out var thiefRole)) revealController.BeginEscapeReveal(thiefRole.Role);
+                else revealController.BeginOutcomeOnly();
+                return;
+            }
+            if (reveal.SelectedTargetId.HasValue && roles.TryGetValue(reveal.SelectedTargetId.Value, out var selectedRole))
+                revealController.BeginReveal(reveal.SelectedTargetId.Value, selectedRole.Role, reveal.Outcome == RevealOutcome.ThiefCaught);
+            else revealController.BeginOutcomeOnly();
+        }
+
+        private IEnumerator CompleteFallbackReveal()
+        {
+            yield return null;
+            if (Controller != null && Controller.Phase == RoundPhase.Reveal)
+            {
+                Controller.CompleteReveal();
+                Controller.CalculateScores();
+            }
+        }
+
+        private IEnumerator RevealPresentationFallback(int roundNumber)
+        {
+            yield return new WaitForSecondsRealtime(Mathf.Max(1f, revealPresentationFallbackSeconds));
+            if (Controller != null && Controller.CurrentRound == roundNumber && Controller.Phase == RoundPhase.Reveal)
+            {
+                Controller.CompleteReveal();
+                Controller.CalculateScores();
+            }
         }
 
         private void OnDiscussionTimerCompleted()
@@ -71,7 +112,11 @@ namespace ThiefAndTheNecklace.PB1.Unity
 
         private void OnRevealFinished()
         {
-            if (Controller != null && Controller.Phase == RoundPhase.Reveal) Controller.CalculateScores();
+            if (Controller != null && Controller.Phase == RoundPhase.Reveal)
+            {
+                Controller.CompleteReveal();
+                Controller.CalculateScores();
+            }
         }
 
         private void OnRoleRevealed(RoleType role, bool thiefCaught)
@@ -97,6 +142,18 @@ namespace ThiefAndTheNecklace.PB1.Unity
                 VotingDurationSeconds=Mathf.Max(1, votingDurationSeconds),
                 AllowEarlyVote=allowEarlyVote,
                 EarlyVoteConfirmationsRequired=allowEarlyVote ? Mathf.Max(1, earlyVoteConfirmationsRequired) : 0
+            }, revealConfig: new RevealConfig
+            {
+                RoleRevealPolicy=roleRevealPolicy,
+                RevealNecklace=revealNecklace,
+                RevealActualThiefOnWrongVote=revealActualThiefOnWrongVote,
+                RevealActualThiefOnEscape=revealActualThiefOnEscape,
+                RequirePresentationAck=requireRevealPresentationAck
+            }, resultsConfig: new ResultsConfig
+            {
+                MinimumDisplaySeconds=Mathf.Max(0f, resultsMinimumDisplaySeconds),
+                MaximumDisplaySeconds=Mathf.Max(Mathf.Max(1f, resultsMaximumDisplaySeconds), resultsMinimumDisplaySeconds),
+                AllowEarlyContinue=allowEarlyResultsContinue
             });
             Controller.PhaseChanged += OnPhaseChanged;
             if (gameTimer != null) gameTimer.Completed += OnDiscussionTimerCompleted;

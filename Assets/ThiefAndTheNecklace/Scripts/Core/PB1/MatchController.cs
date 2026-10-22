@@ -11,6 +11,8 @@ namespace ThiefAndTheNecklace.PB1
         private readonly RuntimeVoteService votes = new RuntimeVoteService();
         private readonly RuntimeVoteResolver voteResolver = new RuntimeVoteResolver();
         private readonly RuntimeScoreService scores = new RuntimeScoreService();
+        private readonly ScoringService scoringService;
+        private readonly RoundCompletionService roundCompletionService;
         private readonly InformationProjectionService informationProjections = new InformationProjectionService();
         private readonly InformationIntegrityValidator informationValidator = new InformationIntegrityValidator();
         private readonly PrivateDataService privateData = new PrivateDataService();
@@ -18,6 +20,7 @@ namespace ThiefAndTheNecklace.PB1
         private readonly RoundResolver roundResolver;
         private readonly FinalizedVoteResolver finalizedVoteResolver = new FinalizedVoteResolver();
         private readonly VoteResolutionConfig voteResolutionConfig;
+        private readonly RevealService revealService;
         private readonly Dictionary<string, VoteResolutionCommit> voteResolutionHistory = new Dictionary<string, VoteResolutionCommit>(StringComparer.Ordinal);
         private readonly RoundFactory roundFactory;
         private readonly ScenarioBuildPipeline scenarioPipeline;
@@ -40,11 +43,15 @@ namespace ThiefAndTheNecklace.PB1
         public event Action<DiscussionEvent> DiscussionEventPublished;
         public event Action<VoteEventType, int, VoteRejectionReason> VoteEventPublished;
         public event Action<VoteResolutionResult> VoteResolutionPublished;
+        public event Action<RevealEvent> RevealEventPublished;
+        public event Action<ScoreEvent> ScoreEventPublished;
+        public event Action<RoundFlowEvent> RoundFlowEventPublished;
         public VoteResolutionResult LastVoteResolutionResult { get; private set; }
+        public RevealResult LastRevealResult => revealService.Current;
         public IReadOnlyList<VoteResolutionResult> VoteResolutionHistory => voteResolutionHistory.Values.Select(item => item.Result).ToList().AsReadOnly();
 
         public MatchController(IScenarioGenerator scenarioGenerator, int seed, int totalRounds, DifficultyLevel difficulty,
-            IReadOnlyList<string> players, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteConfig = null)
+            IReadOnlyList<string> players, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null)
         {
             if (scenarioGenerator == null) throw new ArgumentNullException(nameof(scenarioGenerator));
             if (players == null) throw new ArgumentNullException(nameof(players));
@@ -56,6 +63,21 @@ namespace ThiefAndTheNecklace.PB1
             voteResolutionConfig=voteConfig ?? new VoteResolutionConfig(); voteResolutionConfig.Validate();
             discussion=new DiscussionService(discussionConfig);
             voting=new VotingService();
+            revealService=new RevealService(revealConfig);
+            scoringService=new ScoringService(scoringConfig);
+            roundCompletionService=new RoundCompletionService(resultsConfig);
+            roundCompletionService.EventPublished += item => { RoundFlowEventPublished?.Invoke(item); Record("ROUND_FLOW_" + item.Type.ToString().ToUpperInvariant(), item.RoundId); };
+            scoringService.EventPublished += item => { ScoreEventPublished?.Invoke(item); Record("SCORING_" + item.Type.ToString().ToUpperInvariant(), item.Transaction?.TransactionId ?? item.Snapshot?.Version.ToString() ?? string.Empty); };
+            revealService.EventPublished += item =>
+            {
+                RevealEventPublished?.Invoke(item);
+                Record("REVEAL_" + item.Type.ToString().ToUpperInvariant(), string.Join(":", new[] { item.PlayerId?.ToString() ?? string.Empty, item.Role?.ToString() ?? string.Empty, item.Outcome?.ToString() ?? string.Empty }));
+                if (item.Type == RevealEventType.RoleRevealed) Logged?.Invoke(GameSignal.RoleRevealed);
+                else if (item.Type == RevealEventType.ThiefRevealed) Logged?.Invoke(GameSignal.ThiefRevealed);
+                else if (item.Type == RevealEventType.NecklaceRevealed) Logged?.Invoke(GameSignal.NecklaceRevealed);
+                else if (item.Type == RevealEventType.RevealOutcomeResolved) Logged?.Invoke(GameSignal.RevealOutcomeResolved);
+                else if (item.Type == RevealEventType.RevealCompleted) Logged?.Invoke(GameSignal.RevealCompleted);
+            };
             voting.EventPublished += (type, playerId, reason) => { VoteEventPublished?.Invoke(type, playerId, reason); Record("VOTE_" + type.ToString().ToUpperInvariant(), playerId + ":" + reason); };
             if (discussion.AllowEarlyVote && discussion.EarlyVoteConfirmationsRequired > players.Count)
                 throw new ArgumentOutOfRangeException(nameof(discussionConfig), "Early-vote confirmations cannot exceed the match size.");
@@ -103,6 +125,7 @@ namespace ThiefAndTheNecklace.PB1
             if (State.Match.Status == MatchStatus.Completed || State.Match.Status == MatchStatus.Aborted)
                 throw new InvalidOperationException("A completed or aborted match cannot be aborted again.");
             State.Match.Status=MatchStatus.Aborted;
+            State.Match.CurrentRoundState.Status=RoundStatus.Aborted;
             Logged?.Invoke(GameSignal.MatchAborted);
             Record("MATCH_ABORTED", "");
             StateChanged?.Invoke();
@@ -419,7 +442,11 @@ namespace ThiefAndTheNecklace.PB1
             else
             {
                 round.RunoffCandidates.Clear(); revealCompleted=false;
+                revealService.Prepare(State.Match.MatchId, State.Match.MatchId + "/round/" + State.Match.CurrentRound,
+                    round.Phase, result, State.Match.Players.Select(player => (player.PlayerId, player.Role, player.IsThief)).ToArray());
                 Logged?.Invoke(GameSignal.RevealStarted); ChangePhase(RoundPhase.Reveal);
+                revealService.Activate();
+                revealCompleted=revealService.Current.Status == RevealStatus.Complete;
             }
             ValidateAndNotify(); return legacyOutcome;
         }
@@ -434,45 +461,113 @@ namespace ThiefAndTheNecklace.PB1
         public void CompleteReveal()
         {
             EnsureMatchActive(); EnsureRoundNotCompleted(); RequirePhase(RoundPhase.Reveal);
-            if (revealCompleted) throw new InvalidOperationException("Reveal has already completed.");
-            revealCompleted=true;
-            Logged?.Invoke(GameSignal.RevealCompleted);
-            Logged?.Invoke(GameSignal.RoleRevealed);
-            Record("REVEAL_COMPLETED", "");
+            if (revealService.Current == null) throw new InvalidOperationException("Reveal has not started for this round.");
+            if (revealCompleted) return;
+            revealService.Complete();
+            revealCompleted=revealService.Current.Status == RevealStatus.Complete;
         }
+
+        public RevealSnapshot GetRevealSnapshot() => revealService.CaptureSnapshot();
+        public ScoreSnapshot GetScoreSnapshot() => scoringService.Capture(State.Match.MatchId, State.Match.MatchId + "/round/" + State.Match.CurrentRound, State.Match.Players);
 
         public void ResolveScoring()
         {
             EnsureMatchActive(); EnsureRoundNotCompleted(); RequirePhase(RoundPhase.Reveal);
             if (!revealCompleted) throw new InvalidOperationException("Complete reveal before resolving scores.");
-            roundResolver.ResolveScoring(State);
+            var scoreSnapshot=scoringService.Resolve(revealService.Current, voting.GetFinalizedVotes(), State.Match.Players,
+                State.Match.Players.ToDictionary(player => player.PlayerId, player => player.MatchScore));
+            State.Scores.RoundScores.Clear();
+            foreach (var pair in scoreSnapshot.RoundScores) State.Scores.RoundScores[pair.Key]=pair.Value;
+            State.Scores.Transactions.RemoveAll(item => item.MatchId == scoreSnapshot.MatchId && item.RoundId == scoreSnapshot.RoundId);
+            State.Scores.Transactions.AddRange(scoreSnapshot.Transactions);
+            State.Scores.CommittedRounds.Add(State.Match.CurrentRound);
+            State.Match.CurrentRoundState.ScoringResolved=true;
             Logged?.Invoke(GameSignal.RoundScoreResolved);
             Logged?.Invoke(GameSignal.MatchScoreUpdated);
             Record("ROUND_SCORE_CALCULATED", "");
             Record("ROUND_SCORE_COMMITTED", "");
             ChangePhase(RoundPhase.Scoring);
+            var roundId=State.Match.MatchId + "/round/" + State.Match.CurrentRound;
+            State.Match.CurrentRoundState.RoundId=roundId;
+            State.Match.CurrentRoundState.Status=RoundStatus.Results;
+            var roundResult=roundCompletionService.OpenResults(State.Match, revealService.CaptureSnapshot(), revealService.Current.ActualThiefPlayerId,
+                scoreSnapshot, revealService.Current.RevealedRoles, false);
+            ChangePhase(RoundPhase.Results);
+            roundCompletionService.PublishResults(roundResult);
+            Logged?.Invoke(GameSignal.RoundResultsOpened);
             ValidateAndNotify();
+        }
+
+        public CompletedRoundResult GetCurrentRoundResult() => roundCompletionService.AdvanceState.ResultsActive ? roundCompletionService.CurrentRoundResult : null;
+        public IReadOnlyList<CompletedRoundResult> GetRoundHistory() => roundCompletionService.RoundHistory;
+        public MatchResult GetMatchResult() => roundCompletionService.FinalResult;
+        public RoundAdvanceState GetCurrentRoundAdvanceState() => roundCompletionService.AdvanceState;
+        public bool CanCompleteRound() => State.Match.CurrentRoundState.Phase == RoundPhase.Results && revealCompleted
+            && State.Match.CurrentRoundState.ScoringResolved && roundCompletionService.CurrentRoundResult != null
+            && roundCompletionService.CurrentRoundResult.Finalized;
+        public bool ContinueFromResults(int playerId, string matchId, string roundId)
+        {
+            if (State.Match.Status != MatchStatus.InProgress) throw new InvalidOperationException("Only an active match can continue from results.");
+            RequirePhase(RoundPhase.Results);
+            var added=roundCompletionService.Continue(State.Match, playerId, matchId, roundId);
+            ValidateAndNotify();
+            if (roundCompletionService.CanAdvance(State.Match)) FinishRound();
+            return added;
+        }
+        public bool PollResultsTimeout()
+        {
+            if (State.Match.Status != MatchStatus.InProgress || State.Match.CurrentRoundState.Phase != RoundPhase.Results) return false;
+            if (!roundCompletionService.CanAdvance(State.Match)) return false;
+            var round=State.Match.CurrentRound;
+            FinishRound();
+            return State.Match.Status != MatchStatus.InProgress || State.Match.CurrentRound != round;
         }
 
         public void FinishRound()
         {
-            EnsureMatchActive(); EnsureRoundNotCompleted(); RequirePhase(RoundPhase.Scoring);
+            if (State.Match.Status != MatchStatus.InProgress) throw new InvalidOperationException("Match is not active.");
+            EnsureRoundNotCompleted(); RequirePhase(RoundPhase.Results);
+            if (!CanCompleteRound()) throw new InvalidOperationException("Reveal, score finalization, and persisted round results are required.");
+            if (!roundCompletionService.CanAdvance(State.Match)) throw new InvalidOperationException("Connected players must continue or the maximum results time must expire.");
+            if (roundCompletionService.DecideProgression(State.Match.CurrentRound, State.Match.TotalRounds) == ProgressionDecision.StartNextRound
+                && !roundCompletionService.HasMinimumPlayers(State.Match))
+            {
+                if (roundCompletionService.Config.DisconnectPolicy == DisconnectMatchPolicy.PauseAndWait)
+                    return;
+                if (roundCompletionService.Config.DisconnectPolicy == DisconnectMatchPolicy.AbortIfBelowMinimum)
+                {
+                    State.Match.Status=MatchStatus.Aborted; State.Match.CurrentRoundState.Status=RoundStatus.Aborted;
+                    Logged?.Invoke(GameSignal.MatchAborted); Record("MATCH_ABORTED", "BELOW_MINIMUM_PLAYERS"); ValidateAndNotify(); return;
+                }
+                throw new InvalidOperationException("The match cannot start another round below the configured minimum player count.");
+            }
             if (!State.Match.CurrentRoundState.ScoringResolved || !State.Scores.CommittedRounds.Contains(State.Match.CurrentRound)) throw new InvalidOperationException("Round score must be committed exactly once before finishing.");
+            roundCompletionService.MarkResultsComplete();
             State.Match.CurrentRoundState.Completed=true;
+            State.Match.CurrentRoundState.Status=RoundStatus.Complete;
             ChangePhase(RoundPhase.RoundEnd);
             Logged?.Invoke(GameSignal.RoundCompleted);
             Record("ROUND_COMPLETED", State.Match.CurrentRound.ToString());
-            if (State.Match.CurrentRound == State.Match.TotalRounds)
+            roundCompletionService.PublishProgression(RoundFlowEventType.RoundCompleted);
+            if (roundCompletionService.DecideProgression(State.Match.CurrentRound, State.Match.TotalRounds) == ProgressionDecision.CompleteMatch)
             {
+                State.Match.Status=MatchStatus.Completing;
+                Logged?.Invoke(GameSignal.MatchCompleting);
+                roundCompletionService.PublishProgression(RoundFlowEventType.MatchCompleting);
+                var finalResult=roundCompletionService.BuildFinalResult(State.Match);
                 State.Match.Status=MatchStatus.Completed;
                 ChangePhase(RoundPhase.MatchEnd);
+                roundCompletionService.PublishProgression(RoundFlowEventType.FinalResultsOpened, finalResult);
+                roundCompletionService.PublishProgression(RoundFlowEventType.RematchAvailable, finalResult);
+                roundCompletionService.PublishProgression(RoundFlowEventType.MatchCompleted, finalResult);
                 Logged?.Invoke(GameSignal.MatchCompleted);
                 Record("MATCH_COMPLETED", "");
                 ValidateAndNotify(); return;
             }
+            roundCompletionService.PublishProgression(RoundFlowEventType.NextRoundLoading);
             ChangePhase(RoundPhase.NextRound);
             State.Match.CurrentRound++;
-            State.Match.CurrentRoundState=new RoundState { RoundNumber=State.Match.CurrentRound, Phase=RoundPhase.NextRound };
+            State.Match.CurrentRoundState=new RoundState { RoundNumber=State.Match.CurrentRound, RoundId=State.Match.MatchId + "/round/" + State.Match.CurrentRound, Status=RoundStatus.Preparing, Phase=RoundPhase.NextRound };
             ChangePhase(RoundPhase.Starting);
             PrepareRound();
             ValidateAndNotify();
@@ -494,7 +589,11 @@ namespace ThiefAndTheNecklace.PB1
         }
 
         public IReadOnlyList<RevealedPlayerData> GetRevealedPlayers()
-            => informationProjections.BuildRevealedPlayers(State, revealCompleted);
+        {
+            if (revealService.Current == null) throw new InvalidOperationException("Player roles are public only after the authoritative reveal starts.");
+            return Array.AsReadOnly(revealService.Current.RevealedRoles.Select(item => new RevealedPlayerData
+                { PlayerId=item.PlayerId, Role=item.Role, IsThief=item.IsThief }).ToArray());
+        }
 
         public IReadOnlyList<EvidenceDefinition> GetPrivateEvidence(int playerId, int authenticatedRequesterId)
         {
@@ -504,6 +603,9 @@ namespace ThiefAndTheNecklace.PB1
         public GameSnapshot CaptureSnapshot()
         {
             var snapshot=new SnapshotService().Capture(State);
+            if (revealService.Current != null) snapshot.Reveal=revealService.CaptureSnapshot();
+            snapshot.RoundResult=GetCurrentRoundResult();
+            snapshot.MatchResult=roundCompletionService.FinalResult;
             Logged?.Invoke(GameSignal.SnapshotCreated);
             Record("SNAPSHOT_CREATED", snapshot.Round + ":" + snapshot.Phase);
             return snapshot;
@@ -536,6 +638,7 @@ namespace ThiefAndTheNecklace.PB1
         private void PrepareRoundCore()
         {
             revealCompleted=false;
+            revealService.Reset();
             var roundNumber=State.Match.CurrentRound;
             claims.Clear();
             var context=new RoundContext(State.Match.Seed, roundNumber, DifficultyConfig.Create(State.Match.Difficulty));
@@ -547,6 +650,8 @@ namespace ThiefAndTheNecklace.PB1
             Record("SCENARIO_GENERATED", State.Scenario.ScenarioId + ":attempt=" + State.Scenario.GenerationAttempt + ":seed=" + State.Scenario.Truth.Seed);
             Logged?.Invoke(GameSignal.RolesAssigned);
             State.Match.CurrentRoundState.RoundNumber=roundNumber;
+            State.Match.CurrentRoundState.RoundId=State.Match.MatchId + "/round/" + roundNumber;
+            State.Match.CurrentRoundState.Status=RoundStatus.Active;
             State.Match.CurrentRoundState.ScenarioId=State.Scenario.ScenarioId;
             State.Match.CurrentRoundState.VoteRound=0;
             State.Match.CurrentRoundState.TieCount=0;

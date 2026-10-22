@@ -32,7 +32,9 @@ namespace ThiefAndTheNecklace.Networking
         InitializationFailed,
         MatchNotCompleted,
         RosterLocked,
-        InvalidRematch
+        InvalidRematch,
+        StaleRound,
+        ProtocolMismatch
     }
 
     public enum ConnectionState
@@ -80,6 +82,10 @@ namespace ThiefAndTheNecklace.Networking
         event Action<string, SessionDiscussionEvent> DiscussionEventReceived;
         event Action<string, SessionVoteEvent> VoteEventReceived;
         event Action<string, SessionVoteResolutionEvent> VoteResolutionEventReceived;
+        event Action<string, SessionRevealEvent> RevealEventReceived;
+        event Action<string, SessionScoreEvent> ScoreEventReceived;
+        event Action<string, SessionRoundFlowEvent> RoundFlowEventReceived;
+        event Action<NetworkEnvelope> NetworkEnvelopeReceived;
 
         Task<NetworkOperationResult<LobbySnapshot>> CreateRoomAsync(SessionPlayerIdentity creator, RoomConfiguration configuration);
         Task<NetworkOperationResult<LobbySnapshot>> JoinRoomAsync(string roomId, SessionPlayerIdentity player);
@@ -101,6 +107,12 @@ namespace ThiefAndTheNecklace.Networking
         Task<NetworkOperationResult<ThiefAndTheNecklace.PB1.VoteSubmissionResult>> SubmitVoteAsync(string authenticatedPlayerId, string targetPlayerId, int voteSequence);
         Task<NetworkOperationResult<SessionVotingSnapshot>> GetVotingSnapshotAsync(string authenticatedPlayerId);
         Task<NetworkOperationResult<IReadOnlyList<SessionRevealedPlayerSnapshot>>> GetRevealedPlayerInformationAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<SessionRevealSnapshot>> GetRevealSnapshotAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<SessionScoreSnapshot>> GetScoreSnapshotAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<IReadOnlyList<SessionMatchHistorySnapshot>>> GetMatchHistoryAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> AcknowledgeRevealPresentationAsync(string authenticatedPlayerId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> ContinueFromResultsAsync(string authenticatedPlayerId, string matchId, string roundId);
+        Task<NetworkOperationResult<MatchSessionSnapshot>> PollResultsTimeoutAsync(string authenticatedPlayerId);
     }
 
     public interface INetworkClock

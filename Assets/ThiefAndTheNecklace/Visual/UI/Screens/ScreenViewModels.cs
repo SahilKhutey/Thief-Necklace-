@@ -67,6 +67,10 @@ namespace ThiefAndTheNecklace.Visual.UI
     {
         public string RevealedRole = string.Empty;
         public string Outcome = string.Empty;
+        public string SelectedTarget = string.Empty;
+        public string ThiefPlayer = string.Empty;
+        public string NecklaceOwner = string.Empty;
+        public bool NecklaceRevealed;
         public int ScoreDelta;
         public bool IsThiefObjectiveReveal;
         public UnityEngine.Sprite RevealedArtwork;

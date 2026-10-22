@@ -52,11 +52,26 @@ namespace ThiefAndTheNecklace.PB1
             add { controller.VoteResolutionPublished += value; }
             remove { controller.VoteResolutionPublished -= value; }
         }
+        public event Action<RevealEvent> RevealEventPublished
+        {
+            add { controller.RevealEventPublished += value; }
+            remove { controller.RevealEventPublished -= value; }
+        }
+        public event Action<ScoreEvent> ScoreEventPublished
+        {
+            add { controller.ScoreEventPublished += value; }
+            remove { controller.ScoreEventPublished -= value; }
+        }
+        public event Action<RoundFlowEvent> RoundFlowEventPublished
+        {
+            add { controller.RoundFlowEventPublished += value; }
+            remove { controller.RoundFlowEventPublished -= value; }
+        }
 
         public CoreGameRuntime(IReadOnlyList<string> playerNames, int seed, int totalRounds,
-            DifficultyLevel difficulty, IScenarioGenerator scenarioGenerator, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteResolutionConfig = null)
+            DifficultyLevel difficulty, IScenarioGenerator scenarioGenerator, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteResolutionConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null)
         {
-            controller = new MatchController(scenarioGenerator, seed, totalRounds, difficulty, playerNames, requirePrivateInformationAcknowledgement, discussionConfig, voteResolutionConfig);
+            controller = new MatchController(scenarioGenerator, seed, totalRounds, difficulty, playerNames, requirePrivateInformationAcknowledgement, discussionConfig, voteResolutionConfig, revealConfig, scoringConfig, resultsConfig);
         }
 
         public void StartMatch() => controller.Start();
@@ -95,6 +110,15 @@ namespace ThiefAndTheNecklace.PB1
         public VoteResolutionResult LastVoteResolutionResult => controller.LastVoteResolutionResult;
         public IReadOnlyList<VoteResolutionResult> GetVoteResolutionHistory() => controller.VoteResolutionHistory;
         public void CompleteReveal() => controller.CompleteReveal();
+        public RevealResult LastRevealResult => controller.LastRevealResult;
+        public RevealSnapshot GetRevealSnapshot() => controller.GetRevealSnapshot();
+        public ScoreSnapshot GetScoreSnapshot() => controller.GetScoreSnapshot();
+        public CompletedRoundResult GetCurrentRoundResult() => controller.GetCurrentRoundResult();
+        public IReadOnlyList<CompletedRoundResult> GetRoundHistory() => controller.GetRoundHistory();
+        public MatchResult GetMatchResult() => controller.GetMatchResult();
+        public RoundAdvanceState GetCurrentRoundAdvanceState() => controller.GetCurrentRoundAdvanceState();
+        public bool ContinueFromResults(int playerId, string matchId, string roundId) => controller.ContinueFromResults(playerId, matchId, roundId);
+        public bool PollResultsTimeout() => controller.PollResultsTimeout();
         public void ResolveScoring() => controller.ResolveScoring();
         public void FinishRound() => controller.FinishRound();
         public void AdvanceDiscussionTimer(float deltaSeconds) => controller.AdvanceDiscussionTimer(deltaSeconds);

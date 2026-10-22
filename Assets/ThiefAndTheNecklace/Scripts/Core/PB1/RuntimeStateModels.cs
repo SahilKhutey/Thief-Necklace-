@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ThiefAndTheNecklace.PB1
 {
-    public enum MatchStatus { Created, InProgress, Completed, Aborted }
+    public enum MatchStatus { Created, InProgress, Completing, Completed, Aborted }
     public enum DifficultyLevel { Easy, Normal, Hard }
 
     [Serializable]
@@ -80,6 +80,8 @@ namespace ThiefAndTheNecklace.PB1
         public int? AccusedPlayerId;
         public bool Completed;
         public bool ScoringResolved;
+        public RoundStatus Status = RoundStatus.NotStarted;
+        public string RoundId = string.Empty;
         public List<int> RunoffCandidates = new List<int>();
     }
 
@@ -116,7 +118,8 @@ namespace ThiefAndTheNecklace.PB1
     {
         public Dictionary<int, int> RoundScores = new Dictionary<int, int>();
         public List<int> CommittedRounds = new List<int>();
-        public void Reset() { RoundScores.Clear(); CommittedRounds.Clear(); }
+        public List<ScoreTransaction> Transactions = new List<ScoreTransaction>();
+        public void Reset() { RoundScores.Clear(); CommittedRounds.Clear(); Transactions.Clear(); }
     }
 
     [Serializable]

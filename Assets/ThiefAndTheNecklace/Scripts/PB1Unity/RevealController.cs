@@ -21,15 +21,30 @@ namespace ThiefAndTheNecklace.PB1.Unity
         public void BeginReveal(int accusedPlayerId, RoleType revealedRole, bool thiefCaught)
         {
             if (accusedPlayerId <= 0) throw new ArgumentOutOfRangeException(nameof(accusedPlayerId));
-            StopAllCoroutines();
-            RevealStarted?.Invoke();
-            StartCoroutine(RevealRoutine(revealedRole, thiefCaught));
+            Begin(revealedRole, thiefCaught, true);
         }
 
-        private IEnumerator RevealRoutine(RoleType role, bool thiefCaught)
+        public void BeginEscapeReveal(RoleType revealedRole)
+        {
+            Begin(revealedRole, false, true);
+        }
+
+        public void BeginOutcomeOnly()
+        {
+            Begin(null, false, false);
+        }
+
+        private void Begin(RoleType? role, bool thiefCaught, bool revealRole)
+        {
+            StopAllCoroutines();
+            RevealStarted?.Invoke();
+            StartCoroutine(RevealRoutine(role, thiefCaught, revealRole));
+        }
+
+        private IEnumerator RevealRoutine(RoleType? role, bool thiefCaught, bool revealRole)
         {
             if (cardRevealSeconds > 0f) yield return new WaitForSeconds(cardRevealSeconds);
-            RoleRevealed?.Invoke(role, thiefCaught);
+            if (revealRole && role.HasValue) RoleRevealed?.Invoke(role.Value, thiefCaught);
             RevealFinished?.Invoke();
         }
     }
