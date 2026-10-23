@@ -3,7 +3,8 @@
   "rootNamespace": "ThiefAndTheNecklace.Tests",
   "references": [
     "ThiefAndTheNecklace.Core",
-    "ThiefAndTheNecklace.PB2.Networking"
+    "ThiefAndTheNecklace.PB2.Networking",
+    "ThiefAndTheNecklace.Backend"
   ],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],

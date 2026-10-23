@@ -2,7 +2,7 @@ using System;
 
 namespace ThiefAndTheNecklace.Backend
 {
-    public enum EnvironmentType { Development, Staging, Production }
+    public enum EnvironmentType { Development, Staging, Production, Qa }
 
     /// <summary>Injected by the build/bootstrap configuration; never inferred from a scene name.</summary>
     public sealed class EnvironmentConfig
@@ -14,12 +14,15 @@ namespace ThiefAndTheNecklace.Backend
 
         public EnvironmentConfig(EnvironmentType environment, string serviceProfile, bool enableDebugTools, bool enableSyntheticAccounts)
         {
+            if (!Enum.IsDefined(typeof(EnvironmentType), environment)) throw new ArgumentOutOfRangeException(nameof(environment));
             if (string.IsNullOrWhiteSpace(serviceProfile)) throw new ArgumentException("A service profile identifier is required.", nameof(serviceProfile));
             Environment = environment;
             ServiceProfile = serviceProfile;
             EnableDebugTools = environment != EnvironmentType.Production && enableDebugTools;
             EnableSyntheticAccounts = environment != EnvironmentType.Production && enableSyntheticAccounts;
         }
+
+        public bool IsValid => !string.IsNullOrWhiteSpace(ServiceProfile) && Enum.IsDefined(typeof(EnvironmentType), Environment);
     }
 
     public sealed class ClientVersionInfo
