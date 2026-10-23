@@ -69,9 +69,9 @@ namespace ThiefAndTheNecklace.PB1
         }
 
         public CoreGameRuntime(IReadOnlyList<string> playerNames, int seed, int totalRounds,
-            DifficultyLevel difficulty, IScenarioGenerator scenarioGenerator, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteResolutionConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null)
+            DifficultyLevel difficulty, IScenarioGenerator scenarioGenerator, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteResolutionConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null, Func<long> timestampProvider = null)
         {
-            controller = new MatchController(scenarioGenerator, seed, totalRounds, difficulty, playerNames, requirePrivateInformationAcknowledgement, discussionConfig, voteResolutionConfig, revealConfig, scoringConfig, resultsConfig);
+            controller = new MatchController(scenarioGenerator, seed, totalRounds, difficulty, playerNames, requirePrivateInformationAcknowledgement, discussionConfig, voteResolutionConfig, revealConfig, scoringConfig, resultsConfig, timestampProvider);
         }
 
         public void StartMatch() => controller.Start();
@@ -134,6 +134,10 @@ namespace ThiefAndTheNecklace.PB1
         public IReadOnlyList<PlayerViewData> GetStandings() => controller.GetStandings();
         public GameSnapshot CaptureSnapshot() => controller.CaptureSnapshot();
         public ReplayRecord GetReplayRecord() => controller.GetReplayRecord();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public ReplayRecord GetDeveloperReplayRecord() => controller.GetDeveloperReplayRecord();
+#endif
+        public IReadOnlyList<MatchTraceEvent> GetMatchTrace() => controller.GetMatchTrace();
         public IReadOnlyList<CoreLogEvent> GetCoreLog() => controller.GetCoreLog();
     }
 }

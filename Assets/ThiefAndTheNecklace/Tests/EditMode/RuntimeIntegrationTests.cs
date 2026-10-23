@@ -64,6 +64,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-COMPLETE-005")]
         public void FullFiveRoundMatchCompletesThroughPublicCommands()
         {
             var match=Create();
@@ -80,6 +81,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-RESOLUTION-002")]
         public void FirstTieRunsOffAndSecondTieEscapes()
         {
             var match=Create(rounds:1); match.Start();
@@ -112,6 +114,40 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-REPLAY-001")]
+        public void PublicReplayRedactsAuthorityPayloadAndDetectsTampering()
+        {
+            var match=Create(); match.Start(); match.BeginDiscussion(); match.BeginVoting();
+            Assert.That(match.SubmitVote(1, 2), Is.True);
+            var replay=match.GetReplayRecord();
+            Assert.That(replay.ContainsAuthorityPrivateData, Is.False);
+            Assert.That(replay.SeedRedacted, Is.True);
+            Assert.That(replay.Seed, Is.Zero);
+            Assert.That(replay.Events.All(item => item.Data == string.Empty), Is.True);
+            Assert.That(ReplayIntegrity.Validate(replay).IsValid, Is.True);
+
+            replay.Events[0].EventType="ALTERED_EVENT";
+            Assert.That(ReplayIntegrity.Validate(replay).IsValid, Is.False);
+            var truncated=match.GetReplayRecord();
+            truncated.Events.RemoveAt(truncated.Events.Count - 1);
+            Assert.That(ReplayIntegrity.Validate(truncated).IsValid, Is.False);
+        }
+
+        [Test]
+        [Description("GW17-HASH-001")]
+        public void MatchTraceHasMonotonicSequenceAndSeedStablePublicStateHashes()
+        {
+            var first=Create(34567); var second=Create(34567);
+            first.Start(); second.Start();
+            for (var round=0; round<5; round++) { PlayNoTieRound(first); PlayNoTieRound(second); }
+            var trace=first.GetMatchTrace();
+            Assert.That(trace.Count, Is.GreaterThan(0));
+            Assert.That(trace.Select(item => item.Sequence), Is.EqualTo(Enumerable.Range(1, trace.Count).Select(i => (long)i)));
+            Assert.That(trace.All(item => item.PublicStateHash.Length == 64), Is.True);
+            Assert.That(trace.Select(item => item.PublicStateHash), Is.EqualTo(second.GetMatchTrace().Select(item => item.PublicStateHash)));
+        }
+
+        [Test]
         public void InvalidScenarioAbortsBeforePrivateReveal()
         {
             var truth=DefaultScenarioFactory.CreateRoyalNecklaceTruth();
@@ -141,6 +177,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-SCORE-009")]
         public void RoundCannotScoreOrFinishTwice()
         {
             var match=Create(rounds:1); match.Start(); PlayNoTieRound(match);

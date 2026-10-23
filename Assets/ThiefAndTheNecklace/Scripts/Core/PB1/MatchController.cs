@@ -26,12 +26,14 @@ namespace ThiefAndTheNecklace.PB1
         private readonly ScenarioBuildPipeline scenarioPipeline;
         private readonly RoleAssignmentService roles = new RoleAssignmentService();
         private readonly ReplayRecorder replay;
+        private readonly MatchTraceRecorder matchTrace;
         private readonly ClaimService claims = new ClaimService();
         private readonly DiscussionTimer discussionTimer = new DiscussionTimer();
         private readonly DiscussionService discussion;
         private readonly VotingService voting;
         private readonly List<CoreLogEvent> coreLog = new List<CoreLogEvent>();
         private readonly bool requirePrivateInformationAcknowledgement;
+        private readonly Func<long> timestampProvider;
         private bool revealCompleted;
 
         public GameRuntimeState State { get; }
@@ -49,9 +51,10 @@ namespace ThiefAndTheNecklace.PB1
         public VoteResolutionResult LastVoteResolutionResult { get; private set; }
         public RevealResult LastRevealResult => revealService.Current;
         public IReadOnlyList<VoteResolutionResult> VoteResolutionHistory => voteResolutionHistory.Values.Select(item => item.Result).ToList().AsReadOnly();
+        public IReadOnlyList<MatchTraceEvent> GetMatchTrace() => matchTrace.GetEvents();
 
         public MatchController(IScenarioGenerator scenarioGenerator, int seed, int totalRounds, DifficultyLevel difficulty,
-            IReadOnlyList<string> players, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null)
+            IReadOnlyList<string> players, bool requirePrivateInformationAcknowledgement = false, DiscussionRateConfig discussionConfig = null, VoteResolutionConfig voteConfig = null, RevealConfig revealConfig = null, ScoringConfig scoringConfig = null, ResultsConfig resultsConfig = null, Func<long> timestampProvider = null)
         {
             if (scenarioGenerator == null) throw new ArgumentNullException(nameof(scenarioGenerator));
             if (players == null) throw new ArgumentNullException(nameof(players));
@@ -59,13 +62,16 @@ namespace ThiefAndTheNecklace.PB1
             if (players.Any(string.IsNullOrWhiteSpace)) throw new ArgumentException("Player names must not be empty.", nameof(players));
             if (totalRounds < 1) throw new ArgumentOutOfRangeException(nameof(totalRounds));
             DifficultyConfig.Create(difficulty);
+            this.timestampProvider=timestampProvider ?? (() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+            Func<DateTime> utcClock=() => DateTimeOffset.FromUnixTimeMilliseconds(this.timestampProvider()).UtcDateTime;
+            matchTrace=new MatchTraceRecorder(utcClock);
             this.requirePrivateInformationAcknowledgement=requirePrivateInformationAcknowledgement;
             voteResolutionConfig=voteConfig ?? new VoteResolutionConfig(); voteResolutionConfig.Validate();
-            discussion=new DiscussionService(discussionConfig);
-            voting=new VotingService();
-            revealService=new RevealService(revealConfig);
+            discussion=new DiscussionService(discussionConfig, timestampProvider);
+            voting=new VotingService(timestampProvider);
+            revealService=new RevealService(revealConfig, this.timestampProvider);
             scoringService=new ScoringService(scoringConfig);
-            roundCompletionService=new RoundCompletionService(resultsConfig);
+            roundCompletionService=new RoundCompletionService(resultsConfig, this.timestampProvider);
             roundCompletionService.EventPublished += item => { RoundFlowEventPublished?.Invoke(item); Record("ROUND_FLOW_" + item.Type.ToString().ToUpperInvariant(), item.RoundId); };
             scoringService.EventPublished += item => { ScoreEventPublished?.Invoke(item); Record("SCORING_" + item.Type.ToString().ToUpperInvariant(), item.Transaction?.TransactionId ?? item.Snapshot?.Version.ToString() ?? string.Empty); };
             revealService.EventPublished += item =>
@@ -612,6 +618,9 @@ namespace ThiefAndTheNecklace.PB1
         }
 
         public ReplayRecord GetReplayRecord() => replay.GetRecord();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public ReplayRecord GetDeveloperReplayRecord() => replay.GetDeveloperRecord();
+#endif
 
         public IReadOnlyList<CoreLogEvent> GetCoreLog()
         {
@@ -647,6 +656,8 @@ namespace ThiefAndTheNecklace.PB1
             Record("ROUND_CONTEXT_CREATED", roundNumber + ":" + context.RoundSeed);
             Logged?.Invoke(GameSignal.ScenarioBuildStarted);
             State.Scenario=roundFactory.CreateScenario(context, State.Match.Players.Count, candidate => FinalizeScenarioCandidate(candidate, context));
+            var truthVersion=State.Scenario.Truth;
+            replay.SetScenarioVersion(truthVersion.ScenarioVersion + "/generator-" + truthVersion.GeneratorVersion);
             Record("SCENARIO_GENERATED", State.Scenario.ScenarioId + ":attempt=" + State.Scenario.GenerationAttempt + ":seed=" + State.Scenario.Truth.Seed);
             Logged?.Invoke(GameSignal.RolesAssigned);
             State.Match.CurrentRoundState.RoundNumber=roundNumber;
@@ -777,9 +788,10 @@ namespace ThiefAndTheNecklace.PB1
         private void Record(string eventType, string data)
         {
             replay.Record(State.Match.CurrentRound, eventType, data);
+            matchTrace.Record(State, eventType);
             var item = new CoreLogEvent
             {
-                TimestampUtc = DateTime.UtcNow,
+                TimestampUtc = DateTimeOffset.FromUnixTimeMilliseconds(timestampProvider()).UtcDateTime,
                 Level = CoreLogLevel.Info,
                 EventType = eventType,
                 MatchId = State.Match.MatchId,
