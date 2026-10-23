@@ -23,6 +23,7 @@ namespace ThiefAndTheNecklace.Networking
 
     public enum SessionMatchStatus { NotStarted, Preparing, Active, Completing, Completed, Aborted }
     public enum ActivePlayerLossPolicy { ContinueWithDisconnectedPlayer, AbortMatch }
+    public enum ReplacementPolicy { NoReplacement, AIReplacement, HumanReplacement }
 
     [Serializable]
     public sealed class RematchConfig
@@ -64,7 +65,11 @@ namespace ThiefAndTheNecklace.Networking
         RematchRequested,
         RematchStarted,
         ReturnedToLobby,
-        RoomLeft
+        RoomLeft,
+        PlayerRecoveryExpired,
+        PlayerRemoved,
+        PlayerRehydrated,
+        RecoverySnapshotSent
     }
 
     public sealed class RoomConfiguration
@@ -259,6 +264,7 @@ namespace ThiefAndTheNecklace.Networking
         public IReadOnlyList<string> ReadyToContinuePlayerIds { get; private set; }
         public long ResultsDeadlineMilliseconds { get; private set; }
         public bool ResultsActive { get; private set; }
+        public IReadOnlyDictionary<string,long> RecoveryDeadlineMilliseconds { get; private set; }
         public IReadOnlyList<string> PlayersAcknowledgedPrivateInformation { get; private set; }
         public bool AllConnectedPlayersAcknowledgedPrivateInformation { get; private set; }
         public bool RequiresPrivateInformationAcknowledgement { get; private set; }
@@ -287,6 +293,9 @@ namespace ThiefAndTheNecklace.Networking
                 : advance.ReadyPlayers.Select(id => room.Match.PlayerIds[id-1]).ToArray());
             ResultsDeadlineMilliseconds=advance?.DeadlineMilliseconds ?? 0;
             ResultsActive=advance?.ResultsActive ?? false;
+            var recoveryDeadlines=room.DisconnectedAt.ToDictionary(pair => pair.Key,
+                pair => (long)(pair.Value.AddSeconds(room.RecoveryWindowSeconds).ToUnixTimeMilliseconds()), StringComparer.Ordinal);
+            RecoveryDeadlineMilliseconds=new System.Collections.ObjectModel.ReadOnlyDictionary<string,long>(recoveryDeadlines);
             var playerStates = room.Match == null ? new List<PlayerState>() : room.Match.Runtime.State.Match.Players;
             PlayersAcknowledgedPrivateInformation = Array.AsReadOnly(playerStates
                 .Where(p => p.PrivateInformationAcknowledged)
@@ -532,7 +541,12 @@ namespace ThiefAndTheNecklace.Networking
     {
         public LobbySnapshot Lobby { get; private set; }
         public MatchSessionSnapshot Match { get; private set; }
-        internal SessionReconnectSnapshot(LobbySnapshot lobby, MatchSessionSnapshot match) { Lobby = lobby; Match = match; }
+        public SessionPrivatePlayerSnapshot OwnPrivateInformation { get; private set; }
+        public SessionVotingSnapshot OwnVotingState { get; private set; }
+        public RecoveryState RecoveryState { get; private set; }
+        internal SessionReconnectSnapshot(LobbySnapshot lobby, MatchSessionSnapshot match, SessionPrivatePlayerSnapshot ownPrivateInformation=null,
+            SessionVotingSnapshot ownVotingState=null, RecoveryState recoveryState=RecoveryState.Recovered)
+        { Lobby = lobby; Match = match; OwnPrivateInformation=ownPrivateInformation; OwnVotingState=ownVotingState; RecoveryState=recoveryState; }
     }
 
     public interface IMatchSeedSource { int NextSeed(); }
@@ -569,15 +583,18 @@ namespace ThiefAndTheNecklace.Networking
         public readonly List<MatchResultSnapshot> Results = new List<MatchResultSnapshot>();
         public readonly List<CoreSessionMatch> CompletedMatches = new List<CoreSessionMatch>();
         public readonly HashSet<string> RematchRequests = new HashSet<string>(StringComparer.Ordinal);
+        public readonly Dictionary<string,DateTimeOffset> DisconnectedAt = new Dictionary<string,DateTimeOffset>(StringComparer.Ordinal);
+        public int RecoveryWindowSeconds;
         public long Version;
         public long EventSequence;
 
-        public SessionRoom(string roomId, RoomConfiguration configuration, string hostPlayerId)
+        public SessionRoom(string roomId, RoomConfiguration configuration, string hostPlayerId, int recoveryWindowSeconds)
         {
             RoomId = roomId;
             Configuration = configuration;
             HostPlayerId = hostPlayerId;
             Players = new NetworkPlayerRegistry(configuration.MinimumPlayers, configuration.MaximumPlayers);
+            RecoveryWindowSeconds=recoveryWindowSeconds;
         }
     }
 
@@ -663,6 +680,8 @@ namespace ThiefAndTheNecklace.Networking
         private readonly ResultsConfig _resultsConfig;
         private readonly RematchConfig _rematchConfig;
         private readonly int _protocolVersion;
+        private readonly RecoveryConfig _recoveryConfig;
+        private readonly Func<DateTimeOffset> _utcNow;
 
         public event Action<SessionLifecycleEvent> LifecycleEvent;
         public event Action<string, SessionDiscussionEvent> DiscussionEventPublished;
@@ -673,7 +692,7 @@ namespace ThiefAndTheNecklace.Networking
         public event Action<string, SessionRoundFlowEvent> RoundFlowEventPublished;
 
         public SessionLifecycleRuntime(IScenarioGenerator scenarioGenerator, DifficultyLevel defaultDifficulty = DifficultyLevel.Normal,
-            IMatchSeedSource seedSource = null, IMatchIdSource matchIds = null, IRoomIdSource roomIds = null, VoteResolutionConfig voteResolutionConfig = null, RevealConfig revealConfig = null, ResultsConfig resultsConfig = null, RematchConfig rematchConfig = null, int protocolVersion = 1)
+            IMatchSeedSource seedSource = null, IMatchIdSource matchIds = null, IRoomIdSource roomIds = null, VoteResolutionConfig voteResolutionConfig = null, RevealConfig revealConfig = null, ResultsConfig resultsConfig = null, RematchConfig rematchConfig = null, int protocolVersion = 1, RecoveryConfig recoveryConfig = null, Func<DateTimeOffset> utcNow = null)
         {
             _scenarioGenerator = scenarioGenerator ?? throw new ArgumentNullException(nameof(scenarioGenerator));
             if (!Enum.IsDefined(typeof(DifficultyLevel), defaultDifficulty)) throw new ArgumentOutOfRangeException(nameof(defaultDifficulty));
@@ -690,6 +709,8 @@ namespace ThiefAndTheNecklace.Networking
             _rematchConfig=(rematchConfig ?? new RematchConfig()).Copy(); _rematchConfig.Validate();
             if (protocolVersion < 1) throw new ArgumentOutOfRangeException(nameof(protocolVersion));
             _protocolVersion=protocolVersion;
+            _recoveryConfig=(recoveryConfig ?? new RecoveryConfig()).Copy(); _recoveryConfig.Validate();
+            _utcNow=utcNow ?? (() => DateTimeOffset.UtcNow);
         }
 
         public SessionState GetSessionState(string playerId)
@@ -715,7 +736,7 @@ namespace ThiefAndTheNecklace.Networking
                 try { roomId = _roomIds.NextRoomId(); }
                 catch { return Failure<LobbySnapshot>(NetworkGameError.ServiceUnavailable, "Room identity could not be allocated."); }
                 if (string.IsNullOrWhiteSpace(roomId) || _rooms.ContainsKey(roomId)) return Failure<LobbySnapshot>(NetworkGameError.ServiceUnavailable, "Room identity is invalid or already in use.");
-                var room = new SessionRoom(roomId, configuration, creator.PlayerId);
+                var room = new SessionRoom(roomId, configuration, creator.PlayerId, _recoveryConfig.RecoveryWindowSeconds);
                 if (room.Players.Add(creator.PlayerId, creator.DisplayName) != NetworkGameError.None)
                     return Failure<LobbySnapshot>(NetworkGameError.InvalidIdentity, "Creator could not be added to the lobby.");
                 _rooms.Add(roomId, room);
@@ -753,6 +774,7 @@ namespace ThiefAndTheNecklace.Networking
                     ? (room.Players.SetConnected(player.PlayerId, true) ? NetworkGameError.None : NetworkGameError.NotRoomMember)
                     : room.Players.Add(player.PlayerId, player.DisplayName);
                 if (addResult != NetworkGameError.None) return Failure<LobbySnapshot>(addResult, "Room rejected the join request.");
+                room.DisconnectedAt.Remove(player.PlayerId);
                 if (!knownMember && room.Players.TryGet(player.PlayerId, out existing))
                 {
                     if (room.Players.OrderedPlayerIds.Count == 1) room.HostPlayerId = player.PlayerId;
@@ -776,8 +798,31 @@ namespace ThiefAndTheNecklace.Networking
             var joined = JoinRoom(roomId, player);
             if (!joined.Succeeded) return Failure<SessionReconnectSnapshot>(joined.Error, joined.UserMessage);
             var match = GetMatchSnapshot(roomId, player.PlayerId);
+            var matchSnapshot=match.Succeeded ? match.Value : null;
+            var privateState=GetPrivatePlayerInformation(roomId, player.PlayerId);
+            var voting=GetVotingSnapshot(roomId, player.PlayerId);
+            LobbySnapshot lobbySnapshot;
+            if (match.Succeeded)
+            {
+                List<SessionLifecycleEvent> events;
+                lock (_gate)
+                {
+                    if (!TryGetRoom(roomId, out var room)) return Failure<SessionReconnectSnapshot>(NetworkGameError.SessionNotFound, "Room disappeared during rehydration.");
+                    events=new List<SessionLifecycleEvent>
+                    {
+                        Emit(room, SessionLifecycleEventKind.RecoverySnapshotSent, player.PlayerId, "snapshot-first"),
+                        Emit(room, SessionLifecycleEventKind.PlayerRehydrated, player.PlayerId, room.Match?.Runtime.State.Match.CurrentRoundState.Phase.ToString() ?? "lobby")
+                    };
+                    lobbySnapshot=new LobbySnapshot(room);
+                    matchSnapshot=new MatchSessionSnapshot(room);
+                }
+                Publish(events);
+            }
+            else lobbySnapshot=joined.Value;
             return NetworkOperationResult<SessionReconnectSnapshot>.Success(
-                new SessionReconnectSnapshot(joined.Value, match.Succeeded ? match.Value : null));
+                new SessionReconnectSnapshot(lobbySnapshot, matchSnapshot,
+                    privateState.Succeeded ? privateState.Value : null, voting.Succeeded ? voting.Value : null,
+                    match.Succeeded ? RecoveryState.Recovered : RecoveryState.Failed));
         }
 
         public NetworkOperationResult<LobbySnapshot> SetReadyState(string playerId, bool ready)
@@ -1027,13 +1072,14 @@ namespace ThiefAndTheNecklace.Networking
                 if (room.MatchStatus == SessionMatchStatus.Active || room.MatchStatus == SessionMatchStatus.Preparing)
                 {
                     room.Players.SetConnected(playerId, false);
+                    room.DisconnectedAt[playerId]=_utcNow();
                     var matchPlayerIndex = room.Match == null ? -1 : room.Match.PlayerIds.IndexOf(playerId);
                     if (matchPlayerIndex >= 0) room.Match.Runtime.SetPlayerConnected(matchPlayerIndex + 1, false);
                     _playerStates[playerId] = SessionState.Disconnected;
                     if (string.Equals(room.HostPlayerId, playerId, StringComparison.Ordinal)) TransferHost(room, events, playerId);
                     room.Version++;
                     events.Add(Emit(room, SessionLifecycleEventKind.PlayerConnectionChanged, playerId, "disconnected"));
-                    if (room.Configuration.PlayerLossPolicy == ActivePlayerLossPolicy.AbortMatch)
+                    if (room.Configuration.PlayerLossPolicy == ActivePlayerLossPolicy.AbortMatch && !_recoveryConfig.ContinueMatchDuringWindow)
                     {
                         room.MatchStatus = SessionMatchStatus.Aborted;
                         room.Match.Runtime.AbortMatch();
@@ -1071,12 +1117,14 @@ namespace ThiefAndTheNecklace.Networking
                     && matchRosterIndex < 0)
                     return Failure<LobbySnapshot>(NetworkGameError.RosterLocked, "Only a frozen match participant may reconnect during a match.");
                 if (!room.Players.SetConnected(playerId, connected)) return Failure<LobbySnapshot>(NetworkGameError.NotRoomMember, "Connection update was rejected.");
+                if (connected) room.DisconnectedAt.Remove(playerId);
+                else room.DisconnectedAt[playerId]=_utcNow();
                 var abortedByPolicy = false;
                 if (room.MatchStatus == SessionMatchStatus.Active && room.Match != null)
                 {
                     if (matchRosterIndex >= 0) room.Match.Runtime.SetPlayerConnected(matchRosterIndex + 1, connected);
                     _playerStates[playerId] = connected ? SessionState.InMatch : SessionState.Disconnected;
-                    if (!connected && room.Configuration.PlayerLossPolicy == ActivePlayerLossPolicy.AbortMatch)
+                    if (!connected && room.Configuration.PlayerLossPolicy == ActivePlayerLossPolicy.AbortMatch && !_recoveryConfig.ContinueMatchDuringWindow)
                     {
                         room.MatchStatus = SessionMatchStatus.Aborted;
                         room.Match.Runtime.AbortMatch();
@@ -1096,6 +1144,42 @@ namespace ThiefAndTheNecklace.Networking
             }
             Publish(events);
             return NetworkOperationResult<LobbySnapshot>.Success(snapshot);
+        }
+
+        /// <summary>Authority polls this after the recovery window; expired players lose room membership without rewriting completed round records.</summary>
+        public NetworkOperationResult<int> ExpireDisconnectedPlayers(string roomId, string authenticatedAuthorityId)
+        {
+            var events=new List<SessionLifecycleEvent>();
+            int removed=0;
+            lock (_gate)
+            {
+                if (!TryGetRoom(roomId, out var room)) return Failure<int>(NetworkGameError.SessionNotFound, "Room was not found.");
+                if (!string.Equals(room.HostPlayerId, authenticatedAuthorityId, StringComparison.Ordinal)) return Failure<int>(NetworkGameError.NotRoomAuthority, "Only the current room authority may expire recovery windows.");
+                if (!_recoveryConfig.RemoveAfterTimeout) return NetworkOperationResult<int>.Success(0);
+                var now=_utcNow();
+                var expired=room.DisconnectedAt.Where(pair => now - pair.Value >= TimeSpan.FromSeconds(_recoveryConfig.RecoveryWindowSeconds))
+                    .Select(pair => pair.Key).ToArray();
+                foreach (var playerId in expired)
+                {
+                    room.DisconnectedAt.Remove(playerId);
+                    room.Players.RemoveMember(playerId);
+                    _playerRooms.Remove(playerId);
+                    _playerStates[playerId]=SessionState.Disconnected;
+                    room.Version++;
+                    events.Add(Emit(room, SessionLifecycleEventKind.PlayerRecoveryExpired, playerId, "reconnect-window-expired"));
+                    events.Add(Emit(room, SessionLifecycleEventKind.PlayerRemoved, playerId, "no-replacement"));
+                    removed++;
+                }
+                if (removed > 0 && room.MatchStatus == SessionMatchStatus.Active && room.Configuration.PlayerLossPolicy == ActivePlayerLossPolicy.AbortMatch)
+                {
+                    room.MatchStatus=SessionMatchStatus.Aborted;
+                    if (room.Match != null) room.Match.Runtime.AbortMatch();
+                    room.Version++;
+                    events.Add(Emit(room, SessionLifecycleEventKind.MatchAborted, authenticatedAuthorityId, "recovery-window-expired"));
+                }
+            }
+            Publish(events);
+            return NetworkOperationResult<int>.Success(removed);
         }
 
         public NetworkOperationResult<LobbySnapshot> GetLobbySnapshot(string roomId, string authenticatedPlayerId)

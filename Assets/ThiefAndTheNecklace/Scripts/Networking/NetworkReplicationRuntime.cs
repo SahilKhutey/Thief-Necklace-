@@ -349,6 +349,7 @@ namespace ThiefAndTheNecklace.Networking
         public long LastSequence { get; private set; }
         public bool ResynchronizationRequired { get; private set; }
         public event Action<NetworkEnvelope> EventApplied;
+        public event Action<NetworkMatchSnapshot> SnapshotApplied;
         public event Action SnapshotRequested;
 
         private readonly int protocolVersion;
@@ -361,8 +362,8 @@ namespace ThiefAndTheNecklace.Networking
             if (!validation.IsValid) { RequireSnapshot(); return false; }
             if (Snapshot != null && !string.Equals(Snapshot.MatchId, snapshot.MatchId, StringComparison.Ordinal)
                 && Snapshot.Status != MatchStatus.Completed && Snapshot.Status != MatchStatus.Aborted) { RequireSnapshot(); return false; }
-            if (Snapshot != null && string.Equals(Snapshot.MatchId, snapshot.MatchId, StringComparison.Ordinal) && snapshot.Sequence <= LastSequence) return false;
-            Snapshot=snapshot; LastSequence=snapshot.Sequence; ResynchronizationRequired=false; return true;
+            if (Snapshot != null && string.Equals(Snapshot.MatchId, snapshot.MatchId, StringComparison.Ordinal) && snapshot.Sequence < LastSequence) return false;
+            Snapshot=snapshot; LastSequence=snapshot.Sequence; ResynchronizationRequired=false; SnapshotApplied?.Invoke(snapshot); return true;
         }
 
         public bool ApplyEvent(NetworkEnvelope message, string authenticatedPlayerId)
@@ -393,6 +394,8 @@ namespace ThiefAndTheNecklace.Networking
     public sealed class GameNetworkManager
     {
         private readonly INetworkBackend backend;
+        private readonly object gate=new object();
+        private Task reconnectTask;
         public NetworkConnectionState State { get; private set; } = NetworkConnectionState.Disconnected;
         public event Action<NetworkConnectionState> StateChanged;
         public GameNetworkManager(INetworkBackend backend) { this.backend=backend ?? throw new ArgumentNullException(nameof(backend)); }
@@ -418,11 +421,21 @@ namespace ThiefAndTheNecklace.Networking
             await backend.LeaveRoomAsync(); SetState(NetworkConnectionState.Connected);
         }
         public void MarkReconnecting() { if (State == NetworkConnectionState.InMatch || State == NetworkConnectionState.Ready || State == NetworkConnectionState.Synchronizing) SetState(NetworkConnectionState.Reconnecting); }
-        public async Task ReconnectedAsync(string roomId)
+        public Task ReconnectedAsync(string roomId)
         {
-            if (State != NetworkConnectionState.Reconnecting) throw new InvalidOperationException("Client is not reconnecting.");
+            lock (gate)
+            {
+                if (reconnectTask != null && !reconnectTask.IsCompleted) return reconnectTask;
+                if (State != NetworkConnectionState.Reconnecting && State != NetworkConnectionState.Failed) throw new InvalidOperationException("Client is not reconnecting.");
+                reconnectTask=ReconnectedCoreAsync(roomId);
+                return reconnectTask;
+            }
+        }
+        private async Task ReconnectedCoreAsync(string roomId)
+        {
             SetState(NetworkConnectionState.Connecting);
-            await backend.ConnectAsync(); SetState(NetworkConnectionState.Connected); await JoinRoomAsync(roomId);
+            try { await backend.ConnectAsync(); SetState(NetworkConnectionState.Connected); await JoinRoomAsync(roomId); }
+            catch { SetState(NetworkConnectionState.Failed); throw; }
         }
         public void Disconnect() => SetState(NetworkConnectionState.Disconnected);
         private void SetState(NetworkConnectionState state) { State=state; StateChanged?.Invoke(state); }
