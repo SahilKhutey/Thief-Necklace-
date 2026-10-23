@@ -31,6 +31,8 @@ namespace ThiefAndTheNecklace.Visual.UI
         private readonly Stack<ScreenId> _history = new Stack<ScreenId>();
         private LobbyScreenController _lobby;
         private PrivateRoleScreenController _privateRole;
+        private IInputLockService _inputLocks;
+        private GameplayUxModel _gameplayUxModel;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private VisualDebugHud _debugHud;
 #endif
@@ -39,6 +41,9 @@ namespace ThiefAndTheNecklace.Visual.UI
         private bool _goingBack;
         private bool _cinematicInputLocked;
         private bool _transitionInputLocked;
+        private int _lastTimerAnnouncement = -1;
+        private bool _roundContinuePending;
+        private bool _rematchPending;
         public ScreenId Current { get; private set; }
         public event Action<ScreenId, ScreenId> ScreenChanged;
 
@@ -98,13 +103,15 @@ namespace ThiefAndTheNecklace.Visual.UI
             if (votingView != null)
             {
                 _voting = new VotingOverlayController(votingView);
+                _voting.SetActionGuard(IsInputAllowed);
                 _voting.VoteSubmitted += OnVoteSubmitted;
             }
             var chatView = _overlays.GetView(VisualOverlayId.Chat);
             if (chatView != null)
             {
                 _chat = new ChatOverlayController(chatView);
-                _chat.MessageSubmitted += value => ChatMessageSubmitted?.Invoke(value);
+                _chat.SetActionGuard(IsInputAllowed);
+                _chat.MessageSubmitted += OnChatMessageSubmitted;
             }
             foreach (var entry in screens)
             {
@@ -182,6 +189,11 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private bool CommitScreen(ScreenId previous, ScreenId screen, VisualElement next, bool animate, ScreenTransitionType transitionType = ScreenTransitionType.None)
         {
+            if (previous != screen)
+            {
+                if (screen == ScreenId.RoundResults) _roundContinuePending = false;
+                if (screen == ScreenId.MatchResults) _rematchPending = false;
+            }
             _hasCurrent = true;
             VisualEventBus.Raise(VisualEventType.ScreenClosed);
             foreach (var pair in _views) pair.Value.style.display = DisplayStyle.None;
@@ -371,7 +383,9 @@ namespace ThiefAndTheNecklace.Visual.UI
         private void RefreshInputBlocker()
         {
             if (_inputBlocker != null)
-                _inputBlocker.style.display = _cinematicInputLocked || _transitionInputLocked ? DisplayStyle.Flex : DisplayStyle.None;
+                _inputBlocker.style.display = _cinematicInputLocked || _transitionInputLocked
+                    || (_inputLocks != null && !_inputLocks.CanDispatch(GameplayInputAction.CloseOverlay))
+                    ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         public void BindTimer(float seconds)
@@ -379,10 +393,21 @@ namespace ThiefAndTheNecklace.Visual.UI
             if (_views.TryGetValue(ScreenId.Game, out var game))
             {
                 var label = game.Q<Label>("timer");
+                var panel = game.Q<VisualElement>("timer-panel");
                 if (label != null)
                 {
                     var total = Mathf.Max(0, Mathf.CeilToInt(seconds));
                     label.text = $"{total / 60:00}:{total % 60:00}";
+                    panel?.EnableInClassList("tan-timer--low", total > 5 && total <= 20);
+                    panel?.EnableInClassList("tan-timer--critical", total > 0 && total <= 5);
+                    panel?.EnableInClassList("tan-timer--complete", total == 0);
+                    var shouldAnnounce = total % 30 == 0 || (total <= 20 && (total <= 5 || total % 5 == 0));
+                    var announcement = game.Q<Label>("timer-accessible");
+                    if (announcement != null && shouldAnnounce && total != _lastTimerAnnouncement)
+                    {
+                        announcement.text = total == 0 ? "Time expired. Waiting for the game to advance." : total + (total == 1 ? " second remaining" : " seconds remaining");
+                        _lastTimerAnnouncement = total;
+                    }
                 }
             }
         }
@@ -431,17 +456,120 @@ namespace ThiefAndTheNecklace.Visual.UI
         public event Action<ScreenId, string> RoomRequested;
         public event Action<bool> LobbyReadyChanged;
         public event Action LobbyStartRequested;
-        public void BindVoteTargets(IReadOnlyList<VoteTargetViewModel> publicPlayers, string previouslySelectedId = null)
-            => _voting?.Bind(publicPlayers, previouslySelectedId);
+        public event Action RematchRequested;
+        public void BindVoteTargets(IReadOnlyList<VoteTargetViewModel> publicPlayers, string previouslySelectedId = null, bool voteSubmitted = false)
+            => _voting?.Bind(publicPlayers, previouslySelectedId, voteSubmitted);
         public void BindVoteProgress(int submitted, int eligible, bool runoff, bool isOpen = true) => _voting?.BindProgress(submitted, eligible, runoff, isOpen);
         /// <summary>Call only after the core runtime accepts the submitted vote.</summary>
         public void ConfirmVoteLocked()
         {
+            _voting?.ConfirmSubmissionAccepted();
             HideOverlay(VisualOverlayId.Voting);
             ShowOverlay(VisualOverlayId.VoteLocked);
             HapticsService.Pulse();
             VisualEventBus.Raise(VisualEventType.ButtonPressed);
             VisualEventBus.Raise(VisualEventType.VoteLocked);
+        }
+        public void RejectVoteSubmission(string playerMessage)
+        {
+            _voting?.ConfirmSubmissionRejected(playerMessage);
+            ShowToast(string.IsNullOrWhiteSpace(playerMessage) ? "Your vote was not submitted. Please try again." : playerMessage);
+        }
+        public void ConfirmChatMessageSent() => _chat?.ConfirmMessageSent();
+        public void RejectChatMessage(string playerMessage = null) => _chat?.ConfirmMessageFailed(playerMessage);
+        public void ConfirmLobbyReady(bool ready) => _lobby?.ConfirmReady(ready);
+        public void RejectLobbyReady(string playerMessage = null) => _lobby?.RejectReady(playerMessage);
+        public void RejectLobbyStart(string playerMessage = null) => _lobby?.RejectStart(playerMessage);
+        public void RejectRoundContinue(string playerMessage = null)
+        {
+            _roundContinuePending = false;
+            if (_views.TryGetValue(ScreenId.RoundResults, out var results))
+            {
+                var button = results.Q<Button>("go-scenario-intro");
+                if (button != null) { button.text = "NEXT ROUND"; button.SetEnabled(_gameplayUxModel != null && _gameplayUxModel.CanContinue && IsInputAllowed(GameplayInputAction.Continue)); }
+                var status = results.Q<Label>("round-action-feedback");
+                if (status != null) status.text = string.IsNullOrWhiteSpace(playerMessage) ? "Unable to continue. Please try again." : playerMessage;
+            }
+        }
+        public void RejectRematch(string playerMessage = null)
+        {
+            _rematchPending = false;
+            if (_views.TryGetValue(ScreenId.MatchResults, out var results))
+            {
+                var button = results.Q<Button>("go-lobby");
+                if (button != null) { button.text = "REMATCH"; button.SetEnabled(_gameplayUxModel != null && _gameplayUxModel.CanRematch && IsInputAllowed(GameplayInputAction.Rematch)); }
+                var status = results.Q<Label>("rematch-action-feedback");
+                if (status != null) status.text = string.IsNullOrWhiteSpace(playerMessage) ? "Unable to request a rematch." : playerMessage;
+            }
+        }
+        public void ApplyGameplayUxModel(GameplayUxModel model)
+        {
+            _gameplayUxModel = model;
+            if (model == null) return;
+            _voting?.SetActionGuard(IsInputAllowed);
+            _chat?.SetActionGuard(IsInputAllowed);
+            _lobby?.SetActionGuard(IsInputAllowed);
+            _privateRole?.SetActionGuard(IsInputAllowed);
+            BindTimer(model.RemainingSeconds);
+            if (_views.TryGetValue(ScreenId.Game, out var game))
+            {
+                var callVote = game.Q<Button>("go-vote");
+                if (callVote != null) callVote.SetEnabled((model.CanCallVote && IsInputAllowed(GameplayInputAction.CallVote))
+                    || (model.CanVote && (_inputLocks == null || _inputLocks.CanDispatch(GameplayInputAction.SelectPlayer))));
+                var chatButton = game.Q<Button>("go-chat");
+                if (chatButton != null) chatButton.SetEnabled(model.CanChat && IsInputAllowed(GameplayInputAction.SendChat));
+            }
+            if (_views.TryGetValue(ScreenId.RoundResults, out var roundResults))
+            {
+                var nextRound = roundResults.Q<Button>("go-scenario-intro");
+                if (nextRound != null) nextRound.SetEnabled(model.CanContinue && !_roundContinuePending && IsInputAllowed(GameplayInputAction.Continue));
+            }
+            if (_views.TryGetValue(ScreenId.MatchResults, out var matchResults))
+            {
+                var rematch = matchResults.Q<Button>("go-lobby");
+                if (rematch != null) rematch.SetEnabled(model.CanRematch && !_rematchPending && IsInputAllowed(GameplayInputAction.Rematch));
+            }
+        }
+        public void BindInputLocks(IInputLockService inputLocks)
+        {
+            _inputLocks = inputLocks;
+            _voting?.SetActionGuard(IsInputAllowed);
+            _chat?.SetActionGuard(IsInputAllowed);
+            _lobby?.SetActionGuard(IsInputAllowed);
+            _privateRole?.SetActionGuard(IsInputAllowed);
+            RefreshInputBlocker();
+            RefreshGameplayInput();
+        }
+        public bool CanDispatchGameplayAction(GameplayInputAction action) => IsInputAllowed(action);
+        public void RefreshGameplayInput()
+        {
+            if (_gameplayUxModel != null) ApplyGameplayUxModel(_gameplayUxModel);
+            else
+            {
+                _voting?.SetActionGuard(IsInputAllowed);
+                _chat?.SetActionGuard(IsInputAllowed);
+                _lobby?.SetActionGuard(IsInputAllowed);
+                _privateRole?.SetActionGuard(IsInputAllowed);
+            }
+        }
+        private bool IsInputAllowed(GameplayInputAction action)
+        {
+            if (_inputLocks != null && !_inputLocks.CanDispatch(action)) return false;
+            if (_gameplayUxModel == null) return true;
+            switch (action)
+            {
+                case GameplayInputAction.SelectPlayer:
+                case GameplayInputAction.SubmitVote: return _gameplayUxModel.CanVote && !_gameplayUxModel.VoteSubmitted;
+                case GameplayInputAction.SendChat: return _gameplayUxModel.CanChat;
+                case GameplayInputAction.Ready: return _gameplayUxModel.CanReady;
+                case GameplayInputAction.StartMatch: return _gameplayUxModel.CanStartMatch;
+                case GameplayInputAction.CallVote: return _gameplayUxModel.CanCallVote;
+                case GameplayInputAction.Continue: return _gameplayUxModel.CanContinue;
+                case GameplayInputAction.Rematch: return _gameplayUxModel.CanRematch;
+                case GameplayInputAction.AcknowledgePrivateInformation: return _gameplayUxModel.State != GameplayUxState.Reconnecting;
+                case GameplayInputAction.RevealPrivateInformation: return _gameplayUxModel.State != GameplayUxState.Reconnecting;
+                default: return true;
+            }
         }
         public void BindChatMessages(IReadOnlyList<ChatMessageViewModel> messages) => _chat?.BindMessages(messages);
         public void BindLobby(LobbyScreenViewModel data) => _lobby?.Bind(data);
@@ -458,7 +586,14 @@ namespace ThiefAndTheNecklace.Visual.UI
         {
             var hasCoreListener = VoteSubmitted != null;
             VoteSubmitted?.Invoke(playerId);
-            if (!hasCoreListener) ConfirmVoteLocked();
+            if (!hasCoreListener) RejectVoteSubmission("Voting is unavailable right now.");
+        }
+
+        private void OnChatMessageSubmitted(string message)
+        {
+            var hasChatHandler = ChatMessageSubmitted != null;
+            ChatMessageSubmitted?.Invoke(message);
+            if (!hasChatHandler) RejectChatMessage("Chat is unavailable right now.");
         }
 
         private void OnPrivateRoleContinueRequested()
@@ -474,10 +609,15 @@ namespace ThiefAndTheNecklace.Visual.UI
             if (!hasRoomService) Show(ScreenId.Lobby);
         }
 
-        private void OnLobbyReadyChanged(bool ready) => LobbyReadyChanged?.Invoke(ready);
+        private void OnLobbyReadyChanged(bool ready)
+        {
+            var hasHandler = LobbyReadyChanged != null;
+            LobbyReadyChanged?.Invoke(ready);
+            if (!hasHandler) RejectLobbyReady("Unable to update ready status right now.");
+        }
         private void OnLobbyStartRequested()
         {
-            if (LobbyStartRequested == null) { Show(ScreenId.ScenarioIntro); return; }
+            if (LobbyStartRequested == null) { RejectLobbyStart("Match start is unavailable right now."); return; }
             LobbyStartRequested.Invoke();
         }
 
@@ -489,15 +629,41 @@ namespace ThiefAndTheNecklace.Visual.UI
                 {
                     button.clicked += () => VisualEventBus.Raise(VisualEventType.ButtonPressed);
                     var target = button.name.Substring(3).Replace('-', ' ');
-                    if (string.Equals(target, "chat", StringComparison.OrdinalIgnoreCase)) button.clicked += () => ShowOverlay(VisualOverlayId.Chat);
+                    if (string.Equals(target, "chat", StringComparison.OrdinalIgnoreCase)) button.clicked += () =>
+                    {
+                        if (IsInputAllowed(GameplayInputAction.SendChat)) ShowOverlay(VisualOverlayId.Chat);
+                    };
                     else if (string.Equals(target, "vote", StringComparison.OrdinalIgnoreCase)) button.clicked += () =>
                     {
+                        if (_gameplayUxModel != null && _gameplayUxModel.CanVote)
+                        {
+                            if (_inputLocks == null || _inputLocks.CanDispatch(GameplayInputAction.SelectPlayer)) ShowOverlay(VisualOverlayId.Voting);
+                            return;
+                        }
+                        if (!IsInputAllowed(GameplayInputAction.CallVote)) return;
                         if (CallVoteRequested != null) CallVoteRequested.Invoke();
                         else ShowOverlay(VisualOverlayId.Voting);
                     };
                     else if (string.Equals(target, "settings", StringComparison.OrdinalIgnoreCase)) button.clicked += () => { if (Current == ScreenId.Game) ShowOverlay(VisualOverlayId.Settings); else NavigateByName(target); };
                     else if (button.name == "go-private-role" && screenId == ScreenId.ScenarioIntro) button.clicked += () => ScenarioIntroContinueRequested?.Invoke();
-                    else if (button.name == "go-scenario-intro" && screenId == ScreenId.RoundResults) button.clicked += () => RoundResultsContinueRequested?.Invoke();
+                    else if (button.name == "go-scenario-intro" && screenId == ScreenId.RoundResults) button.clicked += () =>
+                    {
+                        if (_roundContinuePending || !IsInputAllowed(GameplayInputAction.Continue)) return;
+                        _roundContinuePending = true;
+                        button.text = "PREPARING…";
+                        button.SetEnabled(false);
+                        if (RoundResultsContinueRequested != null) RoundResultsContinueRequested.Invoke();
+                        else RejectRoundContinue("Round progression is unavailable right now.");
+                    };
+                    else if (button.name == "go-lobby" && screenId == ScreenId.MatchResults) button.clicked += () =>
+                    {
+                        if (_rematchPending || !IsInputAllowed(GameplayInputAction.Rematch)) return;
+                        _rematchPending = true;
+                        button.text = "REQUESTING…";
+                        button.SetEnabled(false);
+                        if (RematchRequested != null) RematchRequested.Invoke();
+                        else RejectRematch("Rematch is unavailable right now.");
+                    };
                     else if (button.name == "go-round-results" && screenId == ScreenId.Reveal) { /* The core phase controls when results may open. */ }
                     else if (string.Equals(target, "round results", StringComparison.OrdinalIgnoreCase)) button.clicked += () => NavigateByName(target);
                     else button.clicked += () => NavigateByName(target);

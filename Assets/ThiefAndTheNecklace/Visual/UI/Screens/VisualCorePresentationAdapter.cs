@@ -460,6 +460,7 @@ namespace ThiefAndTheNecklace.Visual.UI
             var viewModel = new ResultsScreenViewModel
             {
                 Title = "ROUND " + _controller.CurrentRound + " RESULTS",
+                CanContinueToNextRound = _controller.State.Match.CurrentRound < _controller.State.Match.TotalRounds,
                 Summary = _controller.LastRevealResult == null ? "Reveal information is unavailable."
                     : _controller.LastRevealResult.Outcome == RevealOutcome.ThiefCaught ? "The Thief was discovered. The Necklace is recovered."
                     : _controller.LastRevealResult.Outcome == RevealOutcome.WrongPlayerSelected ? "The wrong player was selected. The Thief escaped with the Necklace."

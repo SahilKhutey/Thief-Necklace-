@@ -12,6 +12,9 @@ namespace ThiefAndTheNecklace.Visual.UI
         private readonly VisualElement _root;
         private readonly TextField _input;
         private readonly Label _validation;
+        private readonly Button _send;
+        private bool _sending;
+        private Func<GameplayInputAction, bool> _actionAllowed = action => true;
         private readonly VisualElementPool<VisualElement> _messagePool = new VisualElementPool<VisualElement>(CreateMessageRow, 4, 48, ResetMessageRow);
         public event Action<string> MessageSubmitted;
 
@@ -20,8 +23,15 @@ namespace ThiefAndTheNecklace.Visual.UI
             _root = root;
             _input = root?.Q<TextField>("chat-input");
             _validation = root?.Q<Label>("chat-validation");
-            var send = root?.Q<Button>("send-message");
-            if (send != null) send.clicked += Submit;
+            _send = root?.Q<Button>("send-message");
+            if (_send != null) _send.clicked += Submit;
+        }
+
+        public void SetActionGuard(Func<GameplayInputAction, bool> actionAllowed)
+        {
+            _actionAllowed = actionAllowed ?? (action => true);
+            if (!_sending && _send != null) _send.SetEnabled(_actionAllowed(GameplayInputAction.SendChat));
+            if (!_sending && _input != null) _input.SetEnabled(_actionAllowed(GameplayInputAction.SendChat));
         }
 
         public void BindMessages(IReadOnlyList<ChatMessageViewModel> messages)
@@ -84,6 +94,7 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private void Submit()
         {
+            if (_sending || !_actionAllowed(GameplayInputAction.SendChat)) return;
             var text = _input?.value?.Trim() ?? string.Empty;
             if (text.Length == 0 || text.Length > 280)
             {
@@ -94,9 +105,34 @@ namespace ThiefAndTheNecklace.Visual.UI
                 }
                 return;
             }
-            if (_validation != null) _validation.style.display = DisplayStyle.None;
+            _sending = true;
+            if (_validation != null) { _validation.text = "Sending…"; _validation.style.display = DisplayStyle.Flex; }
+            _input?.SetEnabled(false);
+            _send?.SetEnabled(false);
             MessageSubmitted?.Invoke(text);
-            if (_input != null) _input.value = string.Empty;
+            if (MessageSubmitted == null) ConfirmMessageSent();
+        }
+
+        public void ConfirmMessageSent()
+        {
+            if (!_sending) return;
+            _sending = false;
+            if (_input != null) { _input.value = string.Empty; _input.SetEnabled(true); }
+            if (_send != null) _send.SetEnabled(_actionAllowed(GameplayInputAction.SendChat));
+            if (_validation != null) { _validation.text = "Sent"; _validation.style.display = DisplayStyle.Flex; }
+        }
+
+        public void ConfirmMessageFailed(string playerMessage = null)
+        {
+            if (!_sending) return;
+            _sending = false;
+            _input?.SetEnabled(true);
+            if (_send != null) _send.SetEnabled(_actionAllowed(GameplayInputAction.SendChat));
+            if (_validation != null)
+            {
+                _validation.text = string.IsNullOrWhiteSpace(playerMessage) ? "Message failed to send. Please retry." : playerMessage;
+                _validation.style.display = DisplayStyle.Flex;
+            }
         }
     }
 }

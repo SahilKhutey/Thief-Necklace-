@@ -46,6 +46,12 @@ namespace ThiefAndTheNecklace.Visual.UI
                 Set(screen, "result-summary", results.Summary);
                 Set(screen, "total-score", results.TotalScore.ToString());
                 SetIfProvided(screen, "screen-subtitle", results.Summary);
+                var nextRound = screen.Q<Button>("go-scenario-intro");
+                if (nextRound != null)
+                {
+                    nextRound.style.display = results.CanContinueToNextRound ? DisplayStyle.Flex : DisplayStyle.None;
+                    nextRound.SetEnabled(results.CanContinueToNextRound);
+                }
                 BindRankings(screen, results.Rankings);
             }
             if (data is ProfileScreenViewModel profile)

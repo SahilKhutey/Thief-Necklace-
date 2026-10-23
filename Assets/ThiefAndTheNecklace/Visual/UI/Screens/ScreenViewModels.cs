@@ -59,6 +59,7 @@ namespace ThiefAndTheNecklace.Visual.UI
         public int ScoreDelta;
         public int TotalScore;
         public string Summary = string.Empty;
+        public bool CanContinueToNextRound;
         public IReadOnlyList<PlayerCardViewModel> Rankings;
     }
 

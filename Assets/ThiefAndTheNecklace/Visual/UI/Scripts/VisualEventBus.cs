@@ -16,7 +16,9 @@ namespace ThiefAndTheNecklace.Visual
         // PV5 canonical presentation contract. Existing PV0–PV4 event names remain valid.
         CardHover, CardSelect, CardFlip, CardReveal, PlayerFocus, PlayerAccused,
         VoteSelect, VoteLock, VoteResolve, NecklaceReveal, ScoreGain, ScoreComplete,
-        RoundEnd, MatchVictory, ThiefEscape, VisualError
+        RoundEnd, MatchVictory, ThiefEscape, VisualError,
+        ActionPending, ActionAccepted, ActionRejected, ConnectionLost, ConnectionRestored,
+        GameplayPhaseChanged, GameplayWarning, GameplayError
     }
 
     /// <summary>Presentation notifications only; gameplay events remain owned by the core runtime.</summary>

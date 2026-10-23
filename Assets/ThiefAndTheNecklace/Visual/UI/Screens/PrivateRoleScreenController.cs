@@ -14,6 +14,8 @@ namespace ThiefAndTheNecklace.Visual.UI
         private readonly Button _reveal;
         private readonly Button _continue;
         private bool _revealing;
+        private bool _hasRevealed;
+        private Func<GameplayInputAction, bool> _actionAllowed = action => true;
         public event Action ContinueRequested;
 
         public PrivateRoleScreenController(VisualElement root)
@@ -23,15 +25,23 @@ namespace ThiefAndTheNecklace.Visual.UI
             _reveal = root?.Q<Button>("show-role");
             _continue = root?.Q<Button>("continue-role");
             if (_reveal != null) _reveal.clicked += Reveal;
-            if (_continue != null) _continue.clicked += () => ContinueRequested?.Invoke();
+            if (_continue != null) _continue.clicked += () => { if (_actionAllowed(GameplayInputAction.AcknowledgePrivateInformation)) ContinueRequested?.Invoke(); };
             Reset();
+        }
+
+        public void SetActionGuard(Func<GameplayInputAction, bool> actionAllowed)
+        {
+            _actionAllowed = actionAllowed ?? (action => true);
+            if (_continue != null && !_revealing) _continue.SetEnabled(_hasRevealed && _actionAllowed(GameplayInputAction.AcknowledgePrivateInformation));
+            if (_reveal != null && !_hasRevealed) _reveal.SetEnabled(_actionAllowed(GameplayInputAction.RevealPrivateInformation));
         }
 
         public void Reset()
         {
             _revealing = false;
+            _hasRevealed = false;
             _card.ShowBack();
-            if (_reveal != null) { _reveal.style.display = DisplayStyle.Flex; _reveal.SetEnabled(true); }
+            if (_reveal != null) { _reveal.style.display = DisplayStyle.Flex; _reveal.SetEnabled(_actionAllowed(GameplayInputAction.RevealPrivateInformation)); }
             if (_continue != null) _continue.SetEnabled(false);
             foreach (var detail in _root.Query<VisualElement>(className: "pv2-private-detail").ToList()) detail.style.display = DisplayStyle.None;
         }
@@ -58,7 +68,7 @@ namespace ThiefAndTheNecklace.Visual.UI
 
         private void Reveal()
         {
-            if (_revealing) return;
+            if (_revealing || !_actionAllowed(GameplayInputAction.RevealPrivateInformation)) return;
             _revealing = true;
             if (_reveal != null) _reveal.style.display = DisplayStyle.None;
             var details = _root.Query<VisualElement>(className: "pv2-private-detail").ToList();
@@ -67,7 +77,8 @@ namespace ThiefAndTheNecklace.Visual.UI
                 VisualEventBus.Raise(VisualEventType.CardRevealStarted);
                 _card.ShowFront();
                 RevealDetails(details);
-                if (_continue != null) _continue.SetEnabled(true);
+                _hasRevealed = true;
+                if (_continue != null) _continue.SetEnabled(_actionAllowed(GameplayInputAction.AcknowledgePrivateInformation));
                 _revealing = false;
                 VisualEventBus.Raise(VisualEventType.CardRevealCompleted);
             }
@@ -78,7 +89,7 @@ namespace ThiefAndTheNecklace.Visual.UI
         private void PlayFlip(System.Collections.Generic.List<VisualElement> details)
         {
             var element = _card.Element;
-            if (element == null) { _card.ShowFront(); RevealDetails(details); if (_continue != null) _continue.SetEnabled(true); _revealing = false; return; }
+            if (element == null) { _card.ShowFront(); RevealDetails(details); _hasRevealed = true; if (_continue != null) _continue.SetEnabled(_actionAllowed(GameplayInputAction.AcknowledgePrivateInformation)); _revealing = false; return; }
             VisualEventBus.Raise(VisualEventType.CardRevealStarted);
             var start = Time.realtimeSinceStartup;
             var changedFace = false;
@@ -94,7 +105,8 @@ namespace ThiefAndTheNecklace.Visual.UI
                 {
                     element.style.scale = new StyleScale(new Scale(Vector3.one));
                     RevealDetails(details);
-                    if (_continue != null) _continue.SetEnabled(true);
+                    _hasRevealed = true;
+                    if (_continue != null) _continue.SetEnabled(_actionAllowed(GameplayInputAction.AcknowledgePrivateInformation));
                     _revealing = false;
                     VisualEventBus.Raise(VisualEventType.CardRevealCompleted);
                     item?.Pause();
