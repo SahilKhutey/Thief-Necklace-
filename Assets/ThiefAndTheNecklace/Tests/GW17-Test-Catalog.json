@@ -1,0 +1,2535 @@
+{
+  "schemaVersion": 1,
+  "source": "GW17 Complete Unit Test Case Suite",
+  "statusNote": "Catalog entries are specifications until mapped to concrete tests and executed on a revision.",
+  "cases": [
+    {
+      "id": "GW17-ROLE-001",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-014",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-021",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-001",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-001",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-002",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-003",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-004",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-005",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-006",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-FOUNDATION-007",
+      "category": "FOUNDATION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-001",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-002",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-003",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-004",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-005",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-006",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-007",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-008",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-009",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-MATCH-010",
+      "category": "MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PLAYER-001",
+      "category": "PLAYER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PLAYER-002",
+      "category": "PLAYER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PLAYER-003",
+      "category": "PLAYER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PLAYER-004",
+      "category": "PLAYER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PLAYER-005",
+      "category": "PLAYER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-002",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.StartMatch_AssignsUniqueRolesAndExactlyOneThief"
+    },
+    {
+      "id": "GW17-ROLE-003",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-004",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-005",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-006",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.RoleAndScenarioAssignment_AreDeterministicForTheSameSeed"
+    },
+    {
+      "id": "GW17-ROLE-007",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-008",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-009",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-010",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-011",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-012",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-ROLE-013",
+      "category": "ROLE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-001",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-002",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.PublicViewDoesNotContainPrivateRoleOrClueFields"
+    },
+    {
+      "id": "GW17-INFO-003",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.PrivateViewRejectsAnotherPlayersIdentity"
+    },
+    {
+      "id": "GW17-INFO-004",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-005",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-006",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-007",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-008",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INFO-009",
+      "category": "INFO",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-001",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-002",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-003",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-004",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-005",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-006",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-007",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-008",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-009",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-010",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-011",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.ScenarioValidator_RejectsMissingEvidenceAndCriticalCoverage"
+    },
+    {
+      "id": "GW17-SCENARIO-012",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-013",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-014",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCENARIO-015",
+      "category": "SCENARIO",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SOLVABILITY-001",
+      "category": "SOLVABILITY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SOLVABILITY-002",
+      "category": "SOLVABILITY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SOLVABILITY-003",
+      "category": "SOLVABILITY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SOLVABILITY-004",
+      "category": "SOLVABILITY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SOLVABILITY-005",
+      "category": "SOLVABILITY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-EVIDENCE-001",
+      "category": "EVIDENCE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-EVIDENCE-002",
+      "category": "EVIDENCE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-EVIDENCE-003",
+      "category": "EVIDENCE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.EvidenceGraph_FindsSupportAndRequiresIndependentPaths"
+    },
+    {
+      "id": "GW17-EVIDENCE-004",
+      "category": "EVIDENCE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-EVIDENCE-005",
+      "category": "EVIDENCE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-001",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-002",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-003",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-004",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-005",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-006",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-007",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-008",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-009",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-010",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-011",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DISCUSSION-012",
+      "category": "DISCUSSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CLAIM-001",
+      "category": "CLAIM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CLAIM-002",
+      "category": "CLAIM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CLAIM-003",
+      "category": "CLAIM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CLAIM-004",
+      "category": "CLAIM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CLAIM-005",
+      "category": "CLAIM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-QUESTION-001",
+      "category": "QUESTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-QUESTION-002",
+      "category": "QUESTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-QUESTION-003",
+      "category": "QUESTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-QUESTION-004",
+      "category": "QUESTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-002",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-003",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.VoteServiceRejectsSelfVoteDuplicateVoteAndInvalidTarget"
+    },
+    {
+      "id": "GW17-VOTE-004",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-005",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-006",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-007",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-008",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-009",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-010",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-011",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-012",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-013",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-015",
+      "category": "VOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-TALLY-001",
+      "category": "VOTE-TALLY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.VoteResolutionRequiresAllEligiblePlayers"
+    },
+    {
+      "id": "GW17-VOTE-TALLY-002",
+      "category": "VOTE-TALLY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-TALLY-003",
+      "category": "VOTE-TALLY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VOTE-TALLY-004",
+      "category": "VOTE-TALLY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-001",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-002",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "RuntimeIntegrationTests.FirstTieRunsOffAndSecondTieEscapes"
+    },
+    {
+      "id": "GW17-RESOLUTION-003",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-004",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-005",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-006",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-007",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-008",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-009",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RESOLUTION-010",
+      "category": "RESOLUTION",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVOTE-001",
+      "category": "REVOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVOTE-002",
+      "category": "REVOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.FirstTieRequiresRunoffAndSecondTieMakesThiefEscape"
+    },
+    {
+      "id": "GW17-REVOTE-003",
+      "category": "REVOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVOTE-004",
+      "category": "REVOTE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-001",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-002",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-003",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-004",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-005",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-006",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-007",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-008",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-009",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REVEAL-010",
+      "category": "REVEAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-001",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "ProductionMatchCoreTests.CorrectInnocentVoterReceivesTheirRoleValueAndWrongVoterGetsZero"
+    },
+    {
+      "id": "GW17-SCORE-002",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-003",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-004",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-005",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-006",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-007",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-008",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-009",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "RuntimeIntegrationTests.RoundCannotScoreOrFinishTwice"
+    },
+    {
+      "id": "GW17-SCORE-010",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-011",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-012",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-013",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-014",
+      "category": "SCORE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SCORE-PARAM-001",
+      "category": "SCORE-PARAM",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-001",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-002",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-003",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-004",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-005",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "RuntimeIntegrationTests.FullFiveRoundMatchCompletesThroughPublicCommands"
+    },
+    {
+      "id": "GW17-COMPLETE-006",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-007",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-008",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-009",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-COMPLETE-010",
+      "category": "COMPLETE",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-001",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-002",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-003",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-004",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-005",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-006",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REMATCH-007",
+      "category": "REMATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-001",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-002",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-003",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-004",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-005",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-006",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-007",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-008",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-009",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-010",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-011",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-012",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-NET-013",
+      "category": "NET",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CMD-001",
+      "category": "CMD",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CMD-002",
+      "category": "CMD",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CMD-003",
+      "category": "CMD",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CMD-004",
+      "category": "CMD",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CMD-005",
+      "category": "CMD",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-001",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-002",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-003",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-004",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-005",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-006",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-007",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-008",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-009",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SEC-010",
+      "category": "SEC",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-001",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-002",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-003",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-004",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-005",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-006",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-007",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-008",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-009",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-010",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-011",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-012",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-013",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-014",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RECOVERY-015",
+      "category": "RECOVERY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-001",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-002",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-003",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-004",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-005",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-AUTH-006",
+      "category": "AUTH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-001",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-002",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-003",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-004",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-005",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-006",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-007",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-008",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-009",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-UX-010",
+      "category": "UX",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INPUT-001",
+      "category": "INPUT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INPUT-002",
+      "category": "INPUT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INPUT-003",
+      "category": "INPUT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-INPUT-004",
+      "category": "INPUT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TIMER-001",
+      "category": "TIMER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TIMER-002",
+      "category": "TIMER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TIMER-003",
+      "category": "TIMER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TIMER-004",
+      "category": "TIMER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TIMER-005",
+      "category": "TIMER",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-001",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-002",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-003",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-004",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-005",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-006",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-007",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-008",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DEBUG-009",
+      "category": "DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-HASH-001",
+      "category": "HASH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "RuntimeIntegrationTests.MatchTraceHasMonotonicSequenceAndSeedStablePublicStateHashes"
+    },
+    {
+      "id": "GW17-HASH-002",
+      "category": "HASH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-HASH-003",
+      "category": "HASH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-HASH-004",
+      "category": "HASH",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-001",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "mapped",
+      "testReference": "RuntimeIntegrationTests.PublicReplayRedactsAuthorityPayloadAndDetectsTampering"
+    },
+    {
+      "id": "GW17-REPLAY-002",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-003",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-004",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-005",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-006",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-007",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REPLAY-008",
+      "category": "REPLAY",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-001",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-002",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-003",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-004",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-005",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-006",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-SERIAL-007",
+      "category": "SERIAL",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-001",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-002",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-003",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-004",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-005",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-006",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-007",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-008",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONFIG-009",
+      "category": "CONFIG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-001",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-002",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-003",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-004",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-005",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-006",
+      "category": "VERSION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-VERSION-MATCH-001",
+      "category": "VERSION-MATCH",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-LIVE-001",
+      "category": "LIVE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-LIVE-002",
+      "category": "LIVE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-LIVE-003",
+      "category": "LIVE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-LIVE-004",
+      "category": "LIVE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-LIVE-005",
+      "category": "LIVE",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TELEMETRY-001",
+      "category": "TELEMETRY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TELEMETRY-002",
+      "category": "TELEMETRY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TELEMETRY-003",
+      "category": "TELEMETRY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TELEMETRY-004",
+      "category": "TELEMETRY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-TELEMETRY-005",
+      "category": "TELEMETRY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROPERTY-001",
+      "category": "PROPERTY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROPERTY-002",
+      "category": "PROPERTY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROPERTY-003",
+      "category": "PROPERTY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROPERTY-004",
+      "category": "PROPERTY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROPERTY-005",
+      "category": "PROPERTY",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONTRACT-001",
+      "category": "CONTRACT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONTRACT-002",
+      "category": "CONTRACT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-CONTRACT-003",
+      "category": "CONTRACT",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REG-001",
+      "category": "REG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REG-002",
+      "category": "REG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-REG-003",
+      "category": "REG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-001",
+      "category": "BUS",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-002",
+      "category": "BUS",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-003",
+      "category": "BUS",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-004",
+      "category": "BUS",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-CMD-001",
+      "category": "BUS-CMD",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-CMD-002",
+      "category": "BUS-CMD",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-BUS-CMD-003",
+      "category": "BUS-CMD",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROJECTION-001",
+      "category": "PROJECTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROJECTION-002",
+      "category": "PROJECTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-PROJECTION-003",
+      "category": "PROJECTION",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RELEASE-DEBUG-001",
+      "category": "RELEASE-DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RELEASE-DEBUG-002",
+      "category": "RELEASE-DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RELEASE-DEBUG-003",
+      "category": "RELEASE-DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-RELEASE-DEBUG-004",
+      "category": "RELEASE-DEBUG",
+      "priority": "P1",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DOMAIN-001",
+      "category": "DOMAIN",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DOMAIN-002",
+      "category": "DOMAIN",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    },
+    {
+      "id": "GW17-DOMAIN-003",
+      "category": "DOMAIN",
+      "priority": "P0",
+      "requirement": "See GW17 specification for expected behavior.",
+      "status": "specified",
+      "testReference": null
+    }
+  ]
+}

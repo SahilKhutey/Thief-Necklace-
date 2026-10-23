@@ -46,6 +46,7 @@ namespace ThiefAndTheNecklace.Tests
         [TestCase(4)]
         [TestCase(5)]
         [TestCase(6)]
+        [Description("GW17-ROLE-002")]
         public void StartMatch_AssignsUniqueRolesAndExactlyOneThief(int count)
         {
             var game = Start(count);
@@ -57,6 +58,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-ROLE-006")]
         public void RoleAndScenarioAssignment_AreDeterministicForTheSameSeed()
         {
             var first = Start(6, 5, 12345);
@@ -76,6 +78,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-INFO-002")]
         public void PublicViewDoesNotContainPrivateRoleOrClueFields()
         {
             var view = Start().GetPublicPlayers().Single();
@@ -95,6 +98,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-INFO-003")]
         public void PrivateViewRejectsAnotherPlayersIdentity()
         {
             var game = Start();
@@ -125,6 +129,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-VOTE-003")]
         public void VoteServiceRejectsSelfVoteDuplicateVoteAndInvalidTarget()
         {
             var game = Start();
@@ -138,6 +143,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-VOTE-TALLY-001")]
         public void VoteResolutionRequiresAllEligiblePlayers()
         {
             var game = Start();
@@ -149,6 +155,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-SCORE-001")]
         public void CorrectInnocentVoterReceivesTheirRoleValueAndWrongVoterGetsZero()
         {
             var game = Start();
@@ -192,6 +199,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-REVOTE-002")]
         public void FirstTieRequiresRunoffAndSecondTieMakesThiefEscape()
         {
             var game = Start();
@@ -286,6 +294,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-EVIDENCE-003")]
         public void EvidenceGraph_FindsSupportAndRequiresIndependentPaths()
         {
             var graph = new EvidenceGraph();
@@ -360,6 +369,7 @@ namespace ThiefAndTheNecklace.Tests
         }
 
         [Test]
+        [Description("GW17-SCENARIO-011")]
         public void ScenarioValidator_RejectsMissingEvidenceAndCriticalCoverage()
         {
             var model = DefaultScenarioFactory.CreateRoyalNecklaceTruth();
